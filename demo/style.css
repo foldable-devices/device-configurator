@@ -4,4 +4,19 @@ body {
   height: 100%;
   width: 100%;
   font-family: 'Roboto', sans-serif;
+  background: black;
+}
+
+@media (spanning: single-fold-vertical) {
+  main-application {
+    --gallery-width: 50%;
+    --detail-visibility: visible;
+  }
+}
+
+@media (spanning: none) {
+  main-application {
+    --gallery-width: 100%;
+    --detail-visibility: hidden;
+  }
 }
