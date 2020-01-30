@@ -5,18 +5,39 @@ body {
   width: 100%;
   font-family: 'Roboto', sans-serif;
   background: black;
+  overflow: hidden;
+}
+
+main-application {
+  --fold-left: 100vw;
+  --fold-width: 0vw;
+  --fold-top: 100vh;
+  --fold-height: 0vh;
 }
 
 @media (spanning: single-fold-vertical) {
   main-application {
-    --gallery-width: 50%;
-    --detail-visibility: visible;
+    --fold-left: env(fold-left);
+    --fold-width: env(fold-width);
+    --fold-top: 100vh;
+    --fold-height: env(fold-height);
+  }
+}
+
+@media (spanning: single-fold-horizontal) {
+  main-application {
+    --fold-left: 100vw;
+    --fold-width: env(fold-width);
+    --fold-top: env(fold-top);
+    --fold-height: env(fold-height);
   }
 }
 
 @media (spanning: none) {
   main-application {
-    --gallery-width: 100%;
-    --detail-visibility: hidden;
+    --fold-left: 100vw;
+    --fold-width: 0vw;
+    --fold-top: 0vh;
+    --fold-height: 100vh;
   }
 }

@@ -37,19 +37,20 @@ export class MainApplication extends LitElement {
     }
 
     #full-img {
-      width: 50%;
+      height: 90%;
+      object-fit: contain;
     }
 
     .detail-img {
+      height: 70%;
       width: 80%;
-      object-fit: cover;
-      display: block;
+      object-fit: contain;
       margin-top: 20px;
       flex-grow: 2;
     }
 
     .detail-image {
-      height: 80%;
+      width: 80%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -93,22 +94,53 @@ export class MainApplication extends LitElement {
     }
 
     .gallery {
-      width: var(--gallery-width, 100%);
-      height: 100%;
+      width: var(--fold-left, 100%);
+      height: var(--fold-top, 100vh);
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       grid-template-rows: repeat(auto-fit, 1fr);
       grid-gap: 2px;
       background-color: black;
       grid-auto-flow: dense;
+      overflow: scroll;
+      scrollbar-width: thin;
+      --scrollbar-background: #dfdfdf;
+      --scrollbar-thumb: #84898b;
+    }
+
+    .gallery::-webkit-scrollbar {
+      width: 11px;
+    }
+    .gallery {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-background);
+    }
+    .gallery::-webkit-scrollbar-track {
+      background: var(--scrollbar-background);
+    }
+    .gallery::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb) ;
+      border-radius: 10px;
+      border: 3px solid var(--scrollbar-background);
     }
 
     .detail-container {
-      height: 100vh;
-      width: 50%;
-      visibility: var(--detail-visibility, hidden);
+      height: var(--fold-top);
+      width: calc(100vw - var(--fold-left) - var(--fold-width));
       background-color: black;
       color: white;
+    }
+
+    .fold {
+      height: var(--fold-height, 0);
+      width: var(--fold-width, 0);
+      background: repeating-linear-gradient(
+        -55deg,
+        #242424,
+        #242424 10px,
+        #f4cb16d5 10px,
+        #f4cb16d5 20px
+      );
     }
 
     .detail {
@@ -126,6 +158,7 @@ export class MainApplication extends LitElement {
       margin-top: 20px;
       font-size: 25px;
       display: block;
+      margin-bottom : 20px;
     }
 
     #detail-text-about {
@@ -137,6 +170,7 @@ export class MainApplication extends LitElement {
       color: white;
       font-size: 40px;
       text-align: center;
+      margin-top : 20px;
     }
 
     @media (spanning: single-fold-vertical) {
@@ -198,25 +232,19 @@ export class MainApplication extends LitElement {
   constructor() {
     super();
     this._carouselContainerClasses = { hidden : true};
-    const config = window["__foldables_env_vars__"];
-    config.update({
-      spanning: "single-fold-vertical",
-      foldSize: 10,
-      browserShellSize: 20
-    });
   }
 
   _openPicture (e) {
-    if (window.getComputedStyle(this._detail_container).visibility == 'visible') {
+    if (window.getComputedStyle(this._detail_container).width != '0px') {
       let sourceImage = e.currentTarget.children[1].currentSrc;
       let path = sourceImage.replace('-l', '');
       this._detail_img.setAttribute('src', '');
       this._detail_img.setAttribute('data-src', path);
+      this._detail_text.style.visibility = 'hidden';
       this._detail_img.style.visibility = 'hidden';
       this._detail_select.style.display = 'none';
       this._loading_img.style.visibility = 'visible';
       this._detail.style.visibility = 'visible';
-      this._detail_text.style.visibility = 'hidden';
       this._detail_text.innerHTML = e.currentTarget.children[1].alt;
       this._loadImage();
     } else {
@@ -429,6 +457,7 @@ export class MainApplication extends LitElement {
         </picture>
       </figure>
     </div>
+    <div class="fold"></div>
     <div class="detail-container">
       <div class="detail-select">Select an image in the gallery.</div>
       <div class="detail">
