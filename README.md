@@ -1,8 +1,7 @@
 # Foldable Device Configurator
 
-Web NFC RSP is a web port of the [Sensor NFC Application for Android](https://github.com/intel/rsp-sw-toolkit-nfc). It allows you to program security credentials into the Intel® RFID Sensor Platform (Intel® RSP) using web browser.
-
-:warning: **_WEB NFC RSP IS EXPERIMENTAL AND UNSUPPORTED SOFTWARE. FOR PRODUCTION USE, PLEASE REFER TO THE [ANDROID APPLICATION](https://github.com/intel/rsp-sw-toolkit-nfc)._**
+Foldable Device Configurator is a little Web Components which you can drop in your application to test
+the CSS Spanning Polyfill located [here](https://github.com/zouhir/spanning-css-polyfill)
 
 #### Demo
 
@@ -28,7 +27,7 @@ $ npm install
 
 ESM compatible modules can be found using [pika.dev](pika.de). Material design web components can be found by searching for `@material/mwc-`. You can try out the demo page here: [Material Web Components demo](https://mwc-demos.glitch.me/)
 
-To optimize deployment modules, run
+Then run
 
 ```sh
 $ npx snowpack --optimize
@@ -37,13 +36,11 @@ $ npx snowpack --optimize
 To test in the browser, run
 
 ```sh
-$ npm run deploy
+$ npm run start
 ```
+
+To build, run
 
 ```sh
-$ rollup -c rollup.config.js
+$ npm run build
 ```
-
-#### Reporting a security issue
-
-If you have information about a security issue or vulnerability with an Intel-maintained open source project on https://github.com/intel, please send an e-mail to secure@intel.com. Encrypt sensitive information using our PGP public key. For issues related to Intel products, please visit https://security-center.intel.com.
