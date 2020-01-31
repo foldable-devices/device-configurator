@@ -5,7 +5,7 @@ the CSS Spanning Polyfill located [here](https://github.com/zouhir/spanning-css-
 
 #### Demo
 
-Go to https://darktears.github.io/demos/foldable/dist ([source](https://darktears.github.io/demos/foldable))
+Go to https://darktears.github.io/foldable-device-configurator/demo/index.html ([source](https://darktears.github.io/foldable-device-configurator/demo/index.html))
 
 #### Browser support
 
