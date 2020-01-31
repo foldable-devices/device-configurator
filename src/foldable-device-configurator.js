@@ -63,6 +63,37 @@ class FoldableDeviceConfigurator extends LitElement {
       margin-left: 10px;
       --mdc-theme-secondary: black;
     }
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 32px;
+      height: 32px;
+      opacity: 0.3;
+      background-color: white;
+    }
+
+    .close:hover {
+      opacity: 1;
+    }
+
+    .close:before, .close:after {
+      position: absolute;
+      left: 15px;
+      content: ' ';
+      height: 33px;
+      width: 2px;
+      background-color: #333;
+    }
+
+    .close:before {
+      transform: rotate(45deg);
+    }
+
+    .close:after {
+      transform: rotate(-45deg);
+    }
   `;
 
   _header;
@@ -240,10 +271,17 @@ class FoldableDeviceConfigurator extends LitElement {
     };
   }
 
+  _closeConfigurator() {
+    this.shadowRoot.host.style.visibility = 'hidden';
+    this._seam_slider.style.display = 'none';
+  }
+
   render() {
     return html`
     <div id="wrapper">
-      <div id="header">Foldable Device Configurator</div>
+      <div id="header">Foldable Device Configurator
+      <div class="close" @click="${this._closeConfigurator}"></div>
+      </div>
       <div id="content">
         <div class="horizontal">
           <div class="category">Device type :</div>
