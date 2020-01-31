@@ -1,4 +1,5 @@
-import{a as t,e,j as s}from"../../common/lit-html-e3979997.js";
+import { a as directive, e as AttributePart, j as PropertyPart } from '../../common/lit-html-9957b87e.js';
+
 /**
  * @license
  * Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -11,5 +12,53 @@ import{a as t,e,j as s}from"../../common/lit-html-e3979997.js";
  * Code distributed by Google as part of the polymer project is also
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
- */const n=new WeakMap,o=t(t=>o=>{if(!(o instanceof e)||o instanceof s||"class"!==o.committer.name||o.committer.parts.length>1)throw new Error("The `classMap` directive must be used in the `class` attribute and must be the only part in the attribute.");const{committer:a}=o,{element:i}=a;n.has(o)||(i.className=a.strings.join(" "));const{classList:r}=i,c=n.get(o);for(const e in c)e in t||r.remove(e);for(const e in t){const s=t[e];if(!c||s!==c[e]){r[s?"add":"remove"](e)}}n.set(o,t)});export{o as classMap};
-//# sourceMappingURL=class-map.js.map
+ */
+/**
+ * Stores the ClassInfo object applied to a given AttributePart.
+ * Used to unset existing values when a new ClassInfo object is applied.
+ */
+const classMapCache = new WeakMap();
+/**
+ * A directive that applies CSS classes. This must be used in the `class`
+ * attribute and must be the only part used in the attribute. It takes each
+ * property in the `classInfo` argument and adds the property name to the
+ * element's `classList` if the property value is truthy; if the property value
+ * is falsey, the property name is removed from the element's `classList`. For
+ * example
+ * `{foo: bar}` applies the class `foo` if the value of `bar` is truthy.
+ * @param classInfo {ClassInfo}
+ */
+const classMap = directive((classInfo) => (part) => {
+    if (!(part instanceof AttributePart) || (part instanceof PropertyPart) ||
+        part.committer.name !== 'class' || part.committer.parts.length > 1) {
+        throw new Error('The `classMap` directive must be used in the `class` attribute ' +
+            'and must be the only part in the attribute.');
+    }
+    const { committer } = part;
+    const { element } = committer;
+    // handle static classes
+    if (!classMapCache.has(part)) {
+        element.className = committer.strings.join(' ');
+    }
+    const { classList } = element;
+    // remove old classes that no longer apply
+    const oldInfo = classMapCache.get(part);
+    for (const name in oldInfo) {
+        if (!(name in classInfo)) {
+            classList.remove(name);
+        }
+    }
+    // add new classes
+    for (const name in classInfo) {
+        const value = classInfo[name];
+        if (!oldInfo || value !== oldInfo[name]) {
+            // We explicitly want a loose truthy check here because
+            // it seems more convenient that '' and 0 are skipped.
+            const method = value ? 'add' : 'remove';
+            classList[method](name);
+        }
+    }
+    classMapCache.set(part, classInfo);
+});
+
+export { classMap };

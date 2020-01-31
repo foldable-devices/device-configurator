@@ -1,5 +1,5 @@
 import { LitElement, html, css } from "../web_modules/lit-element.js";
-import '@material/mwc-slider';
+import '../web_modules/@material/mwc-slider';
 
 class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
