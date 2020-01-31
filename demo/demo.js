@@ -1,4 +1,4 @@
-import { LitElement, html, css, property, query, customElement } from "../web_modules/lit-element.js";
+import { LitElement, html, css, customElement } from "../web_modules/lit-element.js";
 import { classMap } from '../web_modules/lit-html/directives/class-map.js';
 
 export class MainApplication extends LitElement {
@@ -15,7 +15,7 @@ export class MainApplication extends LitElement {
       width: 100%;
       height: 100%;
       display: flex;
-      flex-direction: row;
+      flex-direction: var(--flex-layout);
     }
 
     .carousel-container {
@@ -94,15 +94,15 @@ export class MainApplication extends LitElement {
     }
 
     .gallery {
-      width: var(--fold-left, 100%);
-      height: var(--fold-top, 100vh);
+      width: var(--span-1-width, 100vw);
+      height: var(--span-1-height, 100vh);
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       grid-template-rows: repeat(auto-fit, 1fr);
       grid-gap: 2px;
       background-color: black;
       grid-auto-flow: dense;
-      overflow: scroll;
+      overflow-y: scroll;
       scrollbar-width: thin;
       --scrollbar-background: #dfdfdf;
       --scrollbar-thumb: #84898b;
@@ -125,8 +125,8 @@ export class MainApplication extends LitElement {
     }
 
     .detail-container {
-      height: var(--fold-top);
-      width: calc(100vw - var(--fold-left) - var(--fold-width));
+      height: var(--span-2-height, 0vh);
+      width: var(--span-2-width, 0vw);
       background-color: black;
       color: white;
     }
@@ -173,38 +173,18 @@ export class MainApplication extends LitElement {
       margin-top : 20px;
     }
 
-    @media (spanning: single-fold-vertical) {
-      .gallery {
-        width: 50%;
-      }
-
-      .detail-container {
-        width: 50%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-color: black;
-        color: white;
-      }
-    }
-
-    @media (spanning: none) {
-      .gallery {
-        width: 100%;
-      }
-
-      .detail-container {
-        display: none;
-      }
-    }
-
     .gallery-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    /* This rule doesn't work with the polyfill */
+    @media (spanning: single-fold-vertical) {
+      .gallery {
+        background-color: red;
+      }
     }
   `;
 

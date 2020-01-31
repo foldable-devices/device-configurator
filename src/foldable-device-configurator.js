@@ -1,4 +1,4 @@
-import { LitElement, html, css, notEqual } from "../web_modules/lit-element.js";
+import { LitElement, html, css } from "../web_modules/lit-element.js";
 import '@material/mwc-slider';
 
 class FoldableDeviceConfigurator extends LitElement {
@@ -77,6 +77,7 @@ class FoldableDeviceConfigurator extends LitElement {
 
   _position_x;
   _position_y;
+  _resizeHandler;
 
   firstUpdated() {
     this._foldable_config = window["__foldables_env_vars__"];
@@ -131,6 +132,32 @@ class FoldableDeviceConfigurator extends LitElement {
     this._updateConfig();
   }
 
+  _onResize = async (event) => {
+    this._handleAsusSpanning();
+  }
+
+  // This is REALLY BAD, it needs to be in the polyfill (so we can support
+  // non equally split screens). Also this is only working for the demo because
+  // it mess with its variables (rather than touching the polyfill variables but
+  // these are already rewritten by the time I hit this handler).
+  // Hey it's all WIP and research, dont'complain.
+  _handleAsusSpanning() {
+    if (window.innerHeight > 752) {
+      this._spanning = 'single-fold-horizontal';
+      this._fold_width = '20';
+      this._updateConfig();
+      let polyfill = document.styleSheets[document.styleSheets.length - 1];
+      let rule = polyfill.rules[0].cssRules[0];
+      // This is specific to the demo :(, really bad.
+      rule.style.setProperty('--span-1-height', "460px");
+      rule.style.setProperty('--span-2-height', "715px");
+    } else {
+      this._spanning = 'none';
+      this._fold_width = '0';
+      this._updateConfig();
+    }
+  }
+
   _seamValueUpdated = async (event) => {
     if (event.target.value == 0)
       this._spanning = 'none';
@@ -147,6 +174,8 @@ class FoldableDeviceConfigurator extends LitElement {
   _deviceTypeChanged = async (event) => {
     let selectedIndex = this._device_type.selectedIndex;
     let deviceType = this._device_type[selectedIndex].value;
+    window.removeEventListener('resize', this._resizeHandler);
+    this._resizeHandler = null;
     switch(deviceType) {
       case 'standard':
         this._spanning = 'none';
@@ -155,12 +184,24 @@ class FoldableDeviceConfigurator extends LitElement {
         this._disableFoldableControls();
         break;
       case 'neo':
+        this._enableFoldableControls();
+        this._vertical_button.checked = true;
+        this._spanning = 'single-fold-vertical';
+        this._fold_width = '24';
+        this._updateConfig();
+        break;
       case 'duo':
         this._enableFoldableControls();
-        this._vertical_button.selected = true;
+        this._vertical_button.checked = true;
         this._spanning = 'single-fold-vertical';
-        this._fold_width = '30';
+        this._fold_width = '28';
         this._updateConfig();
+        break;
+      case 'asus':
+        this._disableFoldableControls();
+        this._resizeHandler = this._debounce(this._onResize, 200);
+        window.addEventListener('resize', this._resizeHandler);
+        this._handleAsusSpanning();
         break;
       default:
         this._spanning = 'none';
@@ -189,6 +230,14 @@ class FoldableDeviceConfigurator extends LitElement {
       foldSize: this._fold_width,
       browserShellSize: this._browser_shell_size
     });
+  }
+
+  _debounce(fn, wait) {
+    let timeout;
+    return function() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, arguments), wait);
+    };
   }
 
   render() {

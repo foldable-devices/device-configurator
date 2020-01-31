@@ -8,36 +8,51 @@ body {
   overflow: hidden;
 }
 
+
+/* Below is a workaround because the polyfill can't replace the @media
+rules inside a web component/lit element.*/
 main-application {
-  --fold-left: 100vw;
-  --fold-width: 0vw;
-  --fold-top: 100vh;
-  --fold-height: 0vh;
+  --fold-width: 0;
+  --fold-height: 0;
+  --span-1-width: 100vw;
+  --span-1-height: 100vh;
+  --span-2-width: 0vw;
+  --span-2-height: 0vh;
+  --flex-layout: row;
 }
 
 @media (spanning: single-fold-vertical) {
   main-application {
-    --fold-left: env(fold-left);
     --fold-width: env(fold-width);
-    --fold-top: 100vh;
     --fold-height: env(fold-height);
+    --span-1-width: env(fold-left);
+    --span-1-height: 100vh;
+    --span-2-width: calc(100vw - env(fold-left) - env(fold-width));
+    --span-2-height: 100vh;
+    --flex-layout: row;
   }
 }
 
 @media (spanning: single-fold-horizontal) {
   main-application {
-    --fold-left: 100vw;
     --fold-width: env(fold-width);
-    --fold-top: env(fold-top);
     --fold-height: env(fold-height);
+    --span-1-width: 100vw;
+    --span-1-height: env(fold-top);
+    --span-2-width: 100vw;
+    --span-2-height: calc(100vh - env(fold-top) - env(fold-height));
+    --flex-layout: column-reverse;
   }
 }
 
 @media (spanning: none) {
   main-application {
-    --fold-left: 100vw;
-    --fold-width: 0vw;
-    --fold-top: 0vh;
-    --fold-height: 100vh;
+    --fold-width: 0;
+    --fold-height: 0;
+    --span-1-width: 100vw;
+    --span-1-height: 100vh;
+    --span-2-width: 0vw;
+    --span-2-height: 0vh;
+    --flex-layout: row;
   }
 }
