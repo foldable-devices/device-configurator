@@ -18,7 +18,7 @@ class FoldableDeviceConfigurator extends LitElement {
       background-color: black;
       color: white;
       height: 50px;
-      font-size: 20px;
+      font-size: 1.2em;
       cursor: move;
       display: flex;
       justify-content: center;

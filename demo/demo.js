@@ -42,11 +42,8 @@ export class MainApplication extends LitElement {
     }
 
     .detail-img {
-      height: 70%;
-      width: 80%;
+      max-height: 65%;
       object-fit: contain;
-      margin-top: 20px;
-      flex-grow: 2;
     }
 
     .detail-image {
@@ -58,7 +55,7 @@ export class MainApplication extends LitElement {
     }
 
     .loading-img {
-      width: 50px;
+      height: 50px;
       visibility: hidden;
     }
 
@@ -97,7 +94,7 @@ export class MainApplication extends LitElement {
       width: var(--span-1-width, 100vw);
       height: var(--span-1-height, 100vh);
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       grid-template-rows: repeat(auto-fit, 1fr);
       grid-gap: 2px;
       background-color: black;
@@ -156,19 +153,24 @@ export class MainApplication extends LitElement {
     #detail-text {
       color: white;
       margin-top: 20px;
-      font-size: 25px;
+      font-size: 1.5em;
       display: block;
       margin-bottom : 20px;
+      word-wrap: break-word;
+      text-align: center;
+      height: 10%;
     }
 
     #detail-text-about {
       color: white;
-      font-size: 40px;
+      font-size: 2em;
+      height: 10%;
+      margin-bottom: 20px;
     }
 
     .detail-select {
       color: white;
-      font-size: 40px;
+      font-size: 2em;
       text-align: center;
       margin-top : 20px;
     }
@@ -223,6 +225,7 @@ export class MainApplication extends LitElement {
       this._detail_text.style.visibility = 'hidden';
       this._detail_img.style.visibility = 'hidden';
       this._detail_select.style.display = 'none';
+      this._loading_img.style.height = '50px';
       this._loading_img.style.visibility = 'visible';
       this._detail.style.visibility = 'visible';
       this._detail_text.innerHTML = e.currentTarget.children[1].alt;
@@ -251,6 +254,7 @@ export class MainApplication extends LitElement {
           entry.target.setAttribute('src',
                           entry.target.getAttribute('data-src'));
           entry.target.removeAttribute('data-src');
+          this._loading_img.style.height = '0px';
           this._loading_img.style.visibility = 'hidden';
           this._detail_img.style.visibility = 'visible';
           this._detail_text.style.visibility = 'visible';
