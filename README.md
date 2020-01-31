@@ -5,11 +5,11 @@ the CSS Spanning Polyfill located [here](https://github.com/zouhir/spanning-css-
 
 #### Demo
 
-Go to https://darktears.github.io/foldable-device-configurator/demo/index.html ([source](https://darktears.github.io/foldable-device-configurator/demo/index.html))
+Go to https://darktears.github.io/foldable-device-configurator/demo/index.html ([source](https://github.com/darktears/foldable-device-configurator/tree/master/demo))
 
 #### Browser support
 
-This web components will let you emulate various foldable configuration and will set the foldable polyfills accordingly. Currently there are two polyfills you can use to design or adapt web contents for foldable devices :
+This web components will let you emulate various foldable configurations and will set the foldable polyfills accordingly. Currently there are two polyfills you can use to design or adapt web contents for foldable devices :
 - A JavaScript API called Window Segments located [here](https://github.com/zouhir/windowsegments-polyfill)
 - CSS Properties called Spanning located [here](https://github.com/zouhir/spanning-css-polyfill)
 
