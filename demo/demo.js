@@ -37,7 +37,8 @@ export class MainApplication extends LitElement {
     }
 
     #full-img {
-      height: 90%;
+      height: 95%;
+      width: 95%;
       object-fit: contain;
     }
 
