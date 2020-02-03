@@ -18,7 +18,7 @@ export class MainApplication extends LitElement {
       flex-direction: var(--flex-layout);
     }
 
-    .carousel-container {
+    .fullview-container {
       height: 100%;
       width: 100%;
       backdrop-filter: blur(5px) contrast(.8);
@@ -32,7 +32,7 @@ export class MainApplication extends LitElement {
       align-items: center;
     }
 
-    .carousel-container.hidden {
+    .fullview-container.hidden {
       display: none;
     }
 
@@ -55,8 +55,13 @@ export class MainApplication extends LitElement {
     }
 
     .loading-img {
-      height: 50px;
+      height: 0;
       visibility: hidden;
+    }
+
+    .loading-img.visible {
+      height: 50px;
+      visibility: visible;
     }
 
     .close {
@@ -103,6 +108,12 @@ export class MainApplication extends LitElement {
       scrollbar-width: thin;
       --scrollbar-background: #dfdfdf;
       --scrollbar-thumb: #84898b;
+    }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      .gallery {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
     }
 
     .gallery::-webkit-scrollbar {
@@ -191,7 +202,8 @@ export class MainApplication extends LitElement {
   `;
 
   static get properties() { return {
-    _carouselContainerClasses: { type: String }
+    _fullViewContainerClasses: { type: String },
+    _loadingClasses: { type: String }
   };}
 
   _full_img;
@@ -213,7 +225,8 @@ export class MainApplication extends LitElement {
 
   constructor() {
     super();
-    this._carouselContainerClasses = { hidden : true};
+    this._fullViewContainerClasses = { hidden : true };
+    this._loadingClasses = { visible : false };
   }
 
   _openPicture (e) {
@@ -225,14 +238,12 @@ export class MainApplication extends LitElement {
       this._detail_text.style.visibility = 'hidden';
       this._detail_img.style.visibility = 'hidden';
       this._detail_select.style.display = 'none';
-      this._loading_img.style.height = '50px';
-      this._loading_img.style.visibility = 'visible';
+      this._loadingClasses = { visible : true };
       this._detail.style.visibility = 'visible';
       this._detail_text.innerHTML = e.currentTarget.children[1].alt;
       this._loadImage();
     } else {
-      document.body.style.overflow = 'hidden';
-      this._carouselContainerClasses = { hidden: false};
+      this._fullViewContainerClasses = { hidden: false };
       let sourceImage = e.currentTarget.children[1].currentSrc;
       let path = sourceImage.replace('-l', '');
       this._full_img.setAttribute('src', path);
@@ -254,8 +265,7 @@ export class MainApplication extends LitElement {
           entry.target.setAttribute('src',
                           entry.target.getAttribute('data-src'));
           entry.target.removeAttribute('data-src');
-          this._loading_img.style.height = '0px';
-          this._loading_img.style.visibility = 'hidden';
+          this._loadingClasses = { visible : false };
           this._detail_img.style.visibility = 'visible';
           this._detail_text.style.visibility = 'visible';
         }
@@ -264,8 +274,7 @@ export class MainApplication extends LitElement {
   }
 
   _closePicture () {
-    document.body.style.overflow = '';
-    this._carouselContainerClasses = { hidden: true};
+    this._fullViewContainerClasses = { hidden: true };
   }
 
   render() {
@@ -446,13 +455,13 @@ export class MainApplication extends LitElement {
       <div class="detail-select">Select an image in the gallery.</div>
       <div class="detail">
         <div id="detail-text-about">About :</div>
-        <img class="loading-img" src="images/loading.gif">
+        <img class="loading-img ${classMap(this._loadingClasses)}" src="images/loading.gif">
         <img class="detail-img">
         <div id="detail-text"></div>
       </div>
     </div>
   </div>
-  <div class="carousel-container ${classMap(this._carouselContainerClasses)}">
+  <div class="fullview-container ${classMap(this._fullViewContainerClasses)}" @click="${this._closePicture}">
     <div class="close" @click="${this._closePicture}"></div>
     <img id="full-img">
   </div>`;

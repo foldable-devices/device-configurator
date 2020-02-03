@@ -12,6 +12,7 @@ class FoldableDeviceConfigurator extends LitElement {
       top: 10px;
       left: 10px;
       border: 1px solid grey;
+      overscroll-behavior: contain;
     }
 
     #header {
@@ -23,6 +24,8 @@ class FoldableDeviceConfigurator extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
+      user-select: none;
+      touch-action: none;
     }
 
     #content {
@@ -72,6 +75,7 @@ class FoldableDeviceConfigurator extends LitElement {
       height: 32px;
       opacity: 0.3;
       background-color: white;
+      cursor: initial;
     }
 
     .close:hover {
@@ -117,7 +121,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._horizontal_button = this.shadowRoot.getElementById("horizontal");
     this._vertical_button = this.shadowRoot.getElementById("vertical");
     this._seam_slider = this.shadowRoot.getElementById("seam");
-    this._header.onmousedown = this._startDrag;
+    this._header.onpointerdown = this._startDrag;
     this._device_type.onchange = this._deviceTypeChanged;
     this._horizontal_button.oninput = this._horizontalSelected;
     this._vertical_button.oninput = this._verticalSelected;
@@ -130,27 +134,32 @@ class FoldableDeviceConfigurator extends LitElement {
     this._updateConfig();
   }
 
+
   _startDrag = async (event) => {
-    event.preventDefault();
     this._position_x = event.clientX;
     this._position_y = event.clientY;
-    document.onmouseup = this._stopDrag;
-    document.onmousemove = this._drag;
+    this._pointerId = event.pointerId;
+    this._header.setPointerCapture(this._pointerId);
+    this._header.onpointerup = this._stopDrag;
+    this._header.onpointercancel = this._stopDrag;
+    this._header.onpointermove = this._pointerMove;
+    event.preventDefault();
   }
 
-  _drag = async (event) => {
-    event.preventDefault();
+  _pointerMove = async (event) => {
     let x = this._position_x - event.clientX;
     let y = this._position_y - event.clientY;
     this._position_x = event.clientX;
     this._position_y = event.clientY;
     this.shadowRoot.host.style.top = (this.shadowRoot.host.offsetTop - y) + "px";
     this.shadowRoot.host.style.left = (this.shadowRoot.host.offsetLeft - x) + "px";
+    event.preventDefault();
   }
 
   _stopDrag = async (event) => {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    this._header.onpointerup = null;
+    this._header.onpointermove = null;
+    this._header.releasePointerCapture(this._pointerId);
   }
 
   _verticalSelected = async () => {
@@ -171,7 +180,7 @@ class FoldableDeviceConfigurator extends LitElement {
   // non equally split screens). Also this is only working for the demo because
   // it mess with its variables (rather than touching the polyfill variables but
   // these are already rewritten by the time I hit this handler).
-  // Hey it's all WIP and research, dont'complain.
+  // Hey it's all WIP and research, don't complain.
   _handleAsusSpanning() {
     if (window.innerHeight > 752) {
       this._spanning = 'single-fold-horizontal';
