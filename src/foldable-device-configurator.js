@@ -6,7 +6,6 @@ class FoldableDeviceConfigurator extends LitElement {
     :host {
       position: absolute;
       width: 350px;
-      height: 350px;
       background-color: white;
       box-shadow: 0px 0px 10px 10px #000000;
       top: 10px;
@@ -18,7 +17,7 @@ class FoldableDeviceConfigurator extends LitElement {
     #header {
       background-color: black;
       color: white;
-      height: 50px;
+      height: 40px;
       font-size: 1.2em;
       cursor: move;
       display: flex;
@@ -29,18 +28,9 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     #content {
-      margin-top: 20px;
       display: flex;
       justify-content: center;
       align-items: left;
-      flex-direction: column;
-    }
-
-    .vertical {
-      margin-top: 20px;
-      display: flex;
-      justify-content: left;
-      align-items: center;
       flex-direction: column;
     }
 
@@ -69,10 +59,10 @@ class FoldableDeviceConfigurator extends LitElement {
 
     .close {
       position: absolute;
-      right: 10px;
-      top: 10px;
-      width: 32px;
-      height: 32px;
+      right: 6px;
+      top: 6px;
+      width: 30px;
+      height: 30px;
       opacity: 0.3;
       background-color: white;
       cursor: initial;
@@ -84,9 +74,9 @@ class FoldableDeviceConfigurator extends LitElement {
 
     .close:before, .close:after {
       position: absolute;
-      left: 15px;
+      left: 14px;
       content: ' ';
-      height: 33px;
+      height: 31px;
       width: 2px;
       background-color: #333;
     }
@@ -98,6 +88,47 @@ class FoldableDeviceConfigurator extends LitElement {
     .close:after {
       transform: rotate(-45deg);
     }
+
+    @media (min-width: 320px) and (max-width: 1024px) {
+      :host {
+        position: absolute;
+        width: 250px;
+      }
+
+      #header {
+        height: 25px;
+        font-size: 0.9em;
+      }
+
+      .close {
+        width: 16px;
+        height: 16px;
+        right: 5px;
+        top: 5px;
+      }
+
+      .close:before, .close:after {
+        left: 7px;
+        height: 16px;
+      }
+
+      mwc-slider {
+        margin-left: 5px;
+      }
+
+      .horizontal {
+        margin-top: 10px;
+        font-size: 0.8em;
+      }
+
+      .category {
+        font-size: 0.8em;
+        margin-right: 5px;
+        margin-left: 5px;
+      }
+
+    }
+
   `;
 
   _header;
@@ -289,8 +320,7 @@ class FoldableDeviceConfigurator extends LitElement {
     return html`
     <div id="wrapper">
       <div class="close" @click="${this._closeConfigurator}"></div>
-      <div id="header">Foldable Device Configurator
-      </div>
+      <div id="header">Foldable Device Configurator</div>
       <div id="content">
         <div class="horizontal">
           <div class="category">Device type :</div>
@@ -305,13 +335,12 @@ class FoldableDeviceConfigurator extends LitElement {
           <div class="category">Orientation :</div>
             Vertical : <input type="radio" name="orientation" value="1" checked id="vertical"/>
             Horizontal : <input type="radio" name="orientation" value="2" id="horizontal"/>
-          </div>
         </div>
         <div class="horizontal">
           <div class="category">Seam size :</div>
             <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam"></mwc-slider>
-          </div>
         </div>
+      </div>
     </div>`;
   }
 }
