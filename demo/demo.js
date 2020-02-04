@@ -43,26 +43,28 @@ export class MainApplication extends LitElement {
     }
 
     .detail-img {
-      max-height: 65%;
+      height: 100%;
+      width: 100%;
       object-fit: contain;
     }
 
-    .detail-image {
-      width: 80%;
+    .loading-img {
+      height: 50px;
+      display: none;
+    }
+
+    .loading-img.visible {
+      display: block;
+    }
+
+    .loading {
+      min-height: 70%;
+      height: 70%;
+      width: 90%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-    }
-
-    .loading-img {
-      height: 0;
-      visibility: hidden;
-    }
-
-    .loading-img.visible {
-      height: 50px;
-      visibility: visible;
     }
 
     .close {
@@ -164,20 +166,19 @@ export class MainApplication extends LitElement {
 
     #detail-text {
       color: white;
-      margin-top: 20px;
       font-size: 1.5em;
-      display: block;
-      margin-bottom : 20px;
       word-wrap: break-word;
       text-align: center;
-      height: 10%;
+      height: 20%;
+      margin-top: 15px;
     }
 
     #detail-text-about {
       color: white;
       font-size: 2em;
+      margin-top: 10px;
+      margin-bottom: 10px;
       height: 10%;
-      margin-bottom: 20px;
     }
 
     .detail-select {
@@ -232,14 +233,13 @@ export class MainApplication extends LitElement {
 
   _openPicture (e) {
     if (window.getComputedStyle(this._detail_container).width != '0px') {
+      this._loadingClasses = { visible : true };
       let sourceImage = e.currentTarget.children[1].currentSrc;
       let path = sourceImage.replace('-l', '');
       this._detail_img.setAttribute('src', '');
       this._detail_img.setAttribute('data-src', path);
-      this._detail_text.style.visibility = 'hidden';
       this._detail_img.style.visibility = 'hidden';
       this._detail_select.style.display = 'none';
-      this._loadingClasses = { visible : true };
       this._detail.style.visibility = 'visible';
       this._detail_text.innerHTML = e.currentTarget.children[1].alt;
       this._loadImage();
@@ -268,7 +268,6 @@ export class MainApplication extends LitElement {
           entry.target.removeAttribute('data-src');
           this._loadingClasses = { visible : false };
           this._detail_img.style.visibility = 'visible';
-          this._detail_text.style.visibility = 'visible';
         }
       }
     }
@@ -456,8 +455,10 @@ export class MainApplication extends LitElement {
       <div class="detail-select">Select an image in the gallery.</div>
       <div class="detail">
         <div id="detail-text-about">About :</div>
-        <img class="loading-img ${classMap(this._loadingClasses)}" src="images/loading.gif">
-        <img class="detail-img">
+        <div class="loading">
+          <img class="loading-img ${classMap(this._loadingClasses)}" src="images/loading.gif">
+          <img class="detail-img">
+        </div>
         <div id="detail-text"></div>
       </div>
     </div>
