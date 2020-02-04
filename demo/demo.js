@@ -111,7 +111,7 @@ export class MainApplication extends LitElement {
       --scrollbar-thumb: #84898b;
     }
 
-    @media (min-width: 320px) and (max-width: 480px) {
+    @media (min-width: 320px) and (max-width: 1024px) {
       .gallery {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       }
