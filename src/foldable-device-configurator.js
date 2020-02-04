@@ -288,8 +288,8 @@ class FoldableDeviceConfigurator extends LitElement {
   render() {
     return html`
     <div id="wrapper">
-      <div id="header">Foldable Device Configurator
       <div class="close" @click="${this._closeConfigurator}"></div>
+      <div id="header">Foldable Device Configurator
       </div>
       <div id="content">
         <div class="horizontal">
