@@ -27,7 +27,7 @@ export class MainApplication extends LitElement {
       top: 0;
       left: 0;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       justify-content: center;
       align-items: center;
     }
@@ -36,10 +36,31 @@ export class MainApplication extends LitElement {
       display: none;
     }
 
+    .arrow-left {
+      width: 30px;
+      height: 30px;
+      border-bottom: solid 10px white;
+      border-left: solid 10px white;
+      opacity: 0.7;
+      border-radius: 15%;
+      transform: rotate(45deg);
+    }
+
+    .arrow-right {
+      width: 30px;
+      height: 30px;
+      border-top: solid 10px white;
+      border-right: solid 10px white;
+      opacity: 0.7;
+      border-radius: 15%;
+      transform: rotate(45deg);
+    }
+
     #full-img {
       height: 95%;
-      width: 95%;
+      width: 85%;
       object-fit: contain;
+      user-select: none;
     }
 
     .detail-img {
@@ -204,8 +225,8 @@ export class MainApplication extends LitElement {
   `;
 
   static get properties() { return {
-    _fullViewContainerClasses: { type: String },
-    _loadingClasses: { type: String }
+    _full_view_container_classes: { type: String },
+    _loading_classes: { type: String }
   };}
 
   _full_img;
@@ -227,15 +248,15 @@ export class MainApplication extends LitElement {
 
   constructor() {
     super();
-    this._fullViewContainerClasses = { hidden : true };
-    this._loadingClasses = { visible : false };
+    this._full_view_container_classes = { hidden : true };
+    this._loading_classes = { visible : false };
   }
 
   _openPicture (e) {
+    let source_image = e.currentTarget.children[1].currentSrc;
+    let path = source_image.replace('-l', '');
     if (window.getComputedStyle(this._detail_container).width != '0px') {
-      this._loadingClasses = { visible : true };
-      let sourceImage = e.currentTarget.children[1].currentSrc;
-      let path = sourceImage.replace('-l', '');
+      this._loading_classes = { visible : true };
       this._detail_img.setAttribute('src', '');
       this._detail_img.setAttribute('data-src', path);
       this._detail_img.style.visibility = 'hidden';
@@ -244,10 +265,9 @@ export class MainApplication extends LitElement {
       this._detail_text.innerHTML = e.currentTarget.children[1].alt;
       this._loadImage();
     } else {
-      this._fullViewContainerClasses = { hidden: false };
-      let sourceImage = e.currentTarget.children[1].currentSrc;
-      let path = sourceImage.replace('-l', '');
+      this._full_view_container_classes = { hidden: false };
       this._full_img.setAttribute('src', path);
+      this._current_image = e.currentTarget;
     }
   }
 
@@ -263,10 +283,9 @@ export class MainApplication extends LitElement {
            this.observer.disconnect();
         }
         if (entry.target.getAttribute('data-src')) {
-          entry.target.setAttribute('src',
-                          entry.target.getAttribute('data-src'));
+          entry.target.setAttribute('src', entry.target.getAttribute('data-src'));
           entry.target.removeAttribute('data-src');
-          this._loadingClasses = { visible : false };
+          this._loading_classes = { visible : false };
           this._detail_img.style.visibility = 'visible';
         }
       }
@@ -274,7 +293,29 @@ export class MainApplication extends LitElement {
   }
 
   _closePicture () {
-    this._fullViewContainerClasses = { hidden: true };
+    this._full_view_container_classes = { hidden: true };
+  }
+
+  _previousPicture (event) {
+    event.stopPropagation();
+    if (this._current_image.parentNode.previousElementSibling) {
+      let previous_node_image = this._current_image.parentNode.previousElementSibling.children[0];
+      let previous_image = previous_node_image.children[1].currentSrc;
+      let path = previous_image.replace('-l', '');
+      this._full_img.setAttribute('src', path);
+      this._current_image = previous_node_image;
+    }
+  }
+
+  _nextPicture (event) {
+    event.stopPropagation();
+    if (this._current_image.parentNode.nextElementSibling) {
+      let next_node_image = this._current_image.parentNode.nextElementSibling.children[0];
+      let next_image = next_node_image.children[1].currentSrc;
+      let path = next_image.replace('-l', '');
+      this._full_img.setAttribute('src', path);
+      this._current_image = next_node_image;
+    }
   }
 
   render() {
@@ -356,97 +397,97 @@ export class MainApplication extends LitElement {
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/city2-l.webp" type="image/webp">
-          <img data-src="images/city2-l.jpg" class="gallery-img" alt="A city street with an arch." loading="lazy">
+          <img data-src="images/city2-l.jpg" class="gallery-img" alt="A city street with an arch.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/lake-l.webp" type="image/webp">
-          <img data-src="images/lake-l.jpg" class="gallery-img" alt="Women coming out of a lake somewhere lost in the nature." loading="lazy">
+          <img data-src="images/lake-l.jpg" class="gallery-img" alt="Women coming out of a lake somewhere lost in the nature.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/mountain-l.webp" type="image/webp">
-          <img data-src="images/mountain-l.jpg" class="gallery-img" alt="Peak of a high mountain and a cloudy sky." loading="lazy">
+          <img data-src="images/mountain-l.jpg" class="gallery-img" alt="Peak of a high mountain and a cloudy sky.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/new-york-l.webp" type="image/webp">
-          <img data-src="images/new-york-l.jpg" class="gallery-img" alt="A street in New York." loading="lazy">
+          <img data-src="images/new-york-l.jpg" class="gallery-img" alt="A street in New York.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/pool-l.webp" type="image/webp">
-          <img data-src="images/pool-l.jpg" class="gallery-img" alt="Relaxing pool in a luxury hotel." loading="lazy">
+          <img data-src="images/pool-l.jpg" class="gallery-img" alt="Relaxing pool in a luxury hotel.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/restaurant-l.webp" type="image/webp">
-          <img data-src="images/restaurant-l.jpg" class="gallery-img" alt="Restaurant on the edge of a river somewhere in France." loading="lazy">
+          <img data-src="images/restaurant-l.jpg" class="gallery-img" alt="Restaurant on the edge of a river somewhere in France.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/river-l.webp" type="image/webp">
-          <img data-src="images/river-l.jpg" class="gallery-img" alt="River with people kayaking." loading="lazy">
+          <img data-src="images/river-l.jpg" class="gallery-img" alt="River with people kayaking.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/road-l.webp" type="image/webp">
-          <img data-src="images/road-l.jpg" class="gallery-img" alt="Long straight road somewhere in USA." loading="lazy">
+          <img data-src="images/road-l.jpg" class="gallery-img" alt="Long straight road somewhere in USA.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/sand-l.webp" type="image/webp">
-          <img data-src="images/sand-l.jpg" class="gallery-img" alt="Desert with rocky mountains on the background." loading="lazy">
+          <img data-src="images/sand-l.jpg" class="gallery-img" alt="Desert with rocky mountains on the background.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/sea-l.webp" type="image/webp">
-          <img data-src="images/sea-l.jpg" class="gallery-img" alt="Beautiful transparent sea water somewhere in the pacific." loading="lazy">
+          <img data-src="images/sea-l.jpg" class="gallery-img" alt="Beautiful transparent sea water somewhere in the pacific.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/sfo-l.webp" type="image/webp">
-          <img data-src="images/sfo-l.jpg" class="gallery-img" alt="Golden gate in San Francisco." loading="lazy">
+          <img data-src="images/sfo-l.jpg" class="gallery-img" alt="Golden gate in San Francisco.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/stars-l.webp" type="image/webp">
-          <img data-src="images/stars-l.jpg" class="gallery-img" alt="Wonderful astronomy shot of stars in the sky." loading="lazy">
+          <img data-src="images/stars-l.jpg" class="gallery-img" alt="Wonderful astronomy shot of stars in the sky.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/tents-l.webp" type="image/webp">
-          <img data-src="images/tents-l.jpg" class="gallery-img" alt="Camping tents hanging on a cliff." loading="lazy">
+          <img data-src="images/tents-l.jpg" class="gallery-img" alt="Camping tents hanging on a cliff.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/waterfall-l.webp" type="image/webp">
-          <img data-src="images/waterfall-l.jpg" class="gallery-img" alt="Picture of a waterfall between big rocks." loading="lazy">
+          <img data-src="images/waterfall-l.jpg" class="gallery-img" alt="Picture of a waterfall between big rocks.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/mountain2-l.webp" type="image/webp">
-          <img data-src="images/mountain2-l.jpg" class="gallery-img" alt="Beautiful picture of a mountain landscape." loading="lazy">
+          <img data-src="images/mountain2-l.jpg" class="gallery-img" alt="Beautiful picture of a mountain landscape.">
         </picture>
       </figure>
       <figure class="gallery-item">
         <picture @click="${this._openPicture}">
           <source srcset="images/wave-l.webp" type="image/webp">
-          <img data-src="images/wave-l.jpg" class="gallery-img" alt="This is a picture from a wave in the ocean." loading="lazy">
+          <img data-src="images/wave-l.jpg" class="gallery-img" alt="This is a picture from a wave in the ocean.">
         </picture>
       </figure>
     </div>
@@ -456,16 +497,18 @@ export class MainApplication extends LitElement {
       <div class="detail">
         <div id="detail-text-about">About :</div>
         <div class="loading">
-          <img class="loading-img ${classMap(this._loadingClasses)}" src="images/loading.gif">
+          <img class="loading-img ${classMap(this._loading_classes)}" src="images/loading.gif">
           <img class="detail-img">
         </div>
         <div id="detail-text"></div>
       </div>
     </div>
   </div>
-  <div class="fullview-container ${classMap(this._fullViewContainerClasses)}" @click="${this._closePicture}">
+  <div class="fullview-container ${classMap(this._full_view_container_classes)}" @click="${this._closePicture}">
     <div class="close" @click="${this._closePicture}"></div>
+    <div class="arrow-left" @click="${this._previousPicture}"></div>
     <img id="full-img">
+    <div class="arrow-right" @click="${this._nextPicture}"></div>
   </div>`;
   }
 }
