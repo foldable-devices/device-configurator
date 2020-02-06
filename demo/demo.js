@@ -200,6 +200,7 @@ export class MainApplication extends LitElement {
       margin-top: 10px;
       margin-bottom: 10px;
       height: 10%;
+      text-decoration: underline;
     }
 
     .detail-select {
