@@ -24,7 +24,7 @@ Web Based Emulator :
 
 On an actual device (Asus ZenBook Pro Duo) :
 
-<video src="images/zenbook.mp4" autoplay loop title="Zenbook Demo" width="400"></video>
+<img src="images/zenbook.gif" alt="Demo of the ZenBook" style="width:400px;"/>
 
 
 ## Browser support
