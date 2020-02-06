@@ -3,15 +3,22 @@
 Foldable Device Configurator is a little Web Components which you can drop in your application to test
 the CSS Spanning Polyfill located [here](https://github.com/zouhir/spanning-css-polyfill)
 
+This demo is being developed by :
+
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Intel-logo.svg/200px-Intel-logo.svg.png" alt="Intel" style="width:50px;"/>
+
 #### Demo
 
 Go to https://darktears.github.io/foldable-device-configurator/demo/index.html ([source](https://github.com/darktears/foldable-device-configurator/tree/master/demo))
 
 #### Browser support
 
-This web components will let you emulate various foldable configurations and will set the foldable polyfills accordingly. Currently there are two polyfills you can use to design or adapt web contents for foldable devices :
+This web component will let you emulate various foldable configurations and will set the foldable polyfills accordingly. Currently there are two polyfills you can use to design or adapt web contents for foldable devices :
 - A JavaScript API called Window Segments located [here](https://github.com/zouhir/windowsegments-polyfill)
 - CSS Properties called Spanning located [here](https://github.com/zouhir/spanning-css-polyfill)
+
+Both are proposals from Microsoft.
 
 :warning: The two aforementioned APIs are early work in progress and are subject to change anytime.
 
