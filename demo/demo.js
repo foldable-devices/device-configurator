@@ -56,6 +56,10 @@ export class MainApplication extends LitElement {
       transform: rotate(45deg);
     }
 
+    .arrow-right:hover, .arrow-left:hover {
+      opacity: 1;
+    }
+
     #full-img {
       height: 95%;
       width: 85%;
