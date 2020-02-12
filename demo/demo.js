@@ -221,40 +221,58 @@ export class MainApplication extends LitElement {
       display: block;
     }
 
-    /* This rule doesn't work with the polyfill */
+    /* These rules do not work with the polyfill */
     @media (spanning: single-fold-vertical) {
-      main-application {
-        --fold-width: env(fold-width);
-        --fold-height: env(fold-height);
-        --span-1-width: env(fold-left);
-        --span-1-height: 100vh;
-        --span-2-width: calc(100vw - env(fold-left) - env(fold-width));
-        --span-2-height: 100vh;
-        --flex-layout: row;
+      .gallery {
+        width: env(fold-left);
+        height: 100vh;
+      }
+      .fold {
+        height: env(fold-height);
+        width: env(fold-width);
+      }
+      .wrapper {
+        flex-direction: row;
+      }
+      .detail-container {
+        height: 100vh;
+        width: calc(100vw - env(fold-left) - env(fold-width));
       }
     }
 
     @media (spanning: single-fold-horizontal) {
-      main-application {
-        --fold-width: env(fold-width);
-        --fold-height: env(fold-height);
-        --span-1-width: 100vw;
-        --span-1-height: calc(100vh - env(fold-top) - env(fold-height));
-        --span-2-width: 100vw;
-        --span-2-height: env(fold-top);
-        --flex-layout: column-reverse;
+      .gallery {
+        width: 100vw;
+        height: calc(100vh - env(fold-top) - env(fold-height));
+      }
+      .fold {
+        height: env(fold-height);
+        width: env(fold-width);
+      }
+      .wrapper {
+        flex-direction: column-reverse;
+      }
+      .detail-container {
+        height: env(fold-top);
+        width: 100vw;
       }
     }
 
     @media (spanning: none) {
-      main-application {
-        --fold-width: 0;
-        --fold-height: 0;
-        --span-1-width: 100vw;
-        --span-1-height: 100vh;
-        --span-2-width: 0vw;
-        --span-2-height: 0vh;
-        --flex-layout: row;
+      .gallery {
+        width: 100vw;
+        height: 100vh;
+      }
+      .fold {
+        height: 0;
+        width: 0;
+      }
+      .wrapper {
+        flex-direction: row;
+      }
+      .detail-container {
+        height: 0vh;
+        width: 0vw;
       }
     }
   `;
