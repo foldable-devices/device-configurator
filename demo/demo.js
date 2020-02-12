@@ -222,11 +222,11 @@ export class MainApplication extends LitElement {
     }
 
     /* This rule doesn't work with the polyfill */
-    @media (spanning: single-fold-vertical) {
+    /*@media (spanning: single-fold-vertical) {
       .gallery {
         background-color: red;
       }
-    }
+    }*/
   `;
 
   static get properties() { return {
