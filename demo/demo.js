@@ -222,11 +222,41 @@ export class MainApplication extends LitElement {
     }
 
     /* This rule doesn't work with the polyfill */
-    /*@media (spanning: single-fold-vertical) {
-      .gallery {
-        background-color: red;
+    @media (spanning: single-fold-vertical) {
+      main-application {
+        --fold-width: env(fold-width);
+        --fold-height: env(fold-height);
+        --span-1-width: env(fold-left);
+        --span-1-height: 100vh;
+        --span-2-width: calc(100vw - env(fold-left) - env(fold-width));
+        --span-2-height: 100vh;
+        --flex-layout: row;
       }
-    }*/
+    }
+
+    @media (spanning: single-fold-horizontal) {
+      main-application {
+        --fold-width: env(fold-width);
+        --fold-height: env(fold-height);
+        --span-1-width: 100vw;
+        --span-1-height: calc(100vh - env(fold-top) - env(fold-height));
+        --span-2-width: 100vw;
+        --span-2-height: env(fold-top);
+        --flex-layout: column-reverse;
+      }
+    }
+
+    @media (spanning: none) {
+      main-application {
+        --fold-width: 0;
+        --fold-height: 0;
+        --span-1-width: 100vw;
+        --span-1-height: 100vh;
+        --span-2-width: 0vw;
+        --span-2-height: 0vh;
+        --flex-layout: row;
+      }
+    }
   `;
 
   static get properties() { return {
