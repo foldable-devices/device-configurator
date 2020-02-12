@@ -274,6 +274,11 @@ export class MainApplication extends LitElement {
         height: 0vh;
         width: 0vw;
       }
+      .fullview-container {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgb(0, 0, 0, 0.5);
+      }
     }
   `;
 
