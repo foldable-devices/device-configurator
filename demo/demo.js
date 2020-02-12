@@ -243,7 +243,7 @@ export class MainApplication extends LitElement {
     @media (spanning: single-fold-horizontal) {
       .gallery {
         width: 100vw;
-        height: env(fold-top);
+        height: calc(100vh - env(fold-top) - env(fold-height));
       }
       .fold {
         height: env(fold-height);
@@ -253,7 +253,7 @@ export class MainApplication extends LitElement {
         flex-direction: column-reverse;
       }
       .detail-container {
-        height: calc(100vh - env(fold-top) - env(fold-height));
+        height: env(fold-top);
         width: 100vw;
       }
     }
