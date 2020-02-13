@@ -61,11 +61,11 @@ class FoldableDeviceConfigurator extends LitElement {
   `;
 
   _header;
-  _device_type;
-  _spanning;
-  _vertical_button;
-  _horizontal_button;
+  _device_type_select;
+  _orientation_select;
   _seam_slider;
+
+  _spanning;
   _fold_width;
   _browser_shell_size;
   _foldable_config;
@@ -76,23 +76,24 @@ class FoldableDeviceConfigurator extends LitElement {
 
   firstUpdated() {
     this._foldable_config = window["__foldables_env_vars__"];
+
     this._header = this.shadowRoot.querySelector('#header');
-    this._device_type = this.shadowRoot.querySelector('#device-select');
+    this._device_type_select = this.shadowRoot.querySelector('#device-select');
     this._orientation_select = this.shadowRoot.querySelector('#orientation-select');
     this._seam_slider = this.shadowRoot.getElementById("seam");
 
-    this._header.onpointerdown = this._startDrag;
-    this._device_type.onchange = this._deviceTypeChanged.bind(this);
+    this._header.onpointerdown = this._startDrag.bind(this);
+    this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
     this._orientation_select.onchange = this._orientationChanged.bind(this);
-    this._seam_slider.oninput = this._seamValueUpdated;
-
-    this._browser_shell_size = '0';
-    this._spanning = 'none';
-    this._fold_width = '0';
-    this._browser_shell_size = '0';
+    this._seam_slider.oninput = this._seamValueUpdated.bind(this);
 
     this._orientation_select.disabled = true;
     this._seam_slider.disabled = true;
+
+    this._browser_shell_size = 0;
+    this.spanning = 'none';
+    this.foldWidth = 0;
+
     this._updateConfig();
   }
 
@@ -134,8 +135,8 @@ class FoldableDeviceConfigurator extends LitElement {
   // Hey it's all WIP and research, don't complain.
   _handleAsusSpanning() {
     if (window.innerHeight > 752) {
-      this._spanning = 'single-fold-horizontal';
-      this._fold_width = '20';
+      this.spanning = 'single-fold-horizontal';
+      this.foldWidth = 20;
       this._updateConfig();
       let polyfill = document.styleSheets[document.styleSheets.length - 1];
       let rule = polyfill.rules[0].cssRules[0];
@@ -143,53 +144,54 @@ class FoldableDeviceConfigurator extends LitElement {
       rule.style.setProperty('--span-1-height', "460px");
       rule.style.setProperty('--span-2-height', "715px");
     } else {
-      this._spanning = 'none';
-      this._fold_width = '0';
+      this.spanning = 'none';
+      this.foldWidth = 0;
       this._updateConfig();
     }
   }
 
   _seamValueUpdated = async (event) => {
-    if (event.target.value == 0)
-      this._spanning = 'none';
-    else {
-      if (this.orientation === "vertical")
-        this._spanning = 'single-fold-vertical';
-      if (this.orientation === "horizontal")
-        this._spanning = 'single-fold-horizontal';
-    }
-    this._fold_width = event.target.value;
+    this.foldWidth = event.target.value;
     this._updateConfig();
   }
 
-  get orientation() {
-    const selectedIndex = this._orientation_select.selectedIndex;
-    return this._orientation_select[selectedIndex].value;
+  get foldWidth() {
+    return this._fold_width;
   }
 
-  set orientation(value) {
-    switch(value) {
-      case "vertical":
-        this._orientation_select.selectedIndex = 0;
-        break;
-      case "horizontal":
-        this._orientation_select.selectedIndex = 1;
-        break;
-    }
+  set foldWidth(value) {
+    this._fold_width = Math.max(0, value);
   }
 
   _orientationChanged(event) {
-    let selected_orientation = this.orientation;
-    if (selected_orientation === 'vertical')
-      this._spanning = 'single-fold-vertical';
-    if (selected_orientation === 'horizontal')
-      this._spanning = 'single-fold-horizontal';
+    const selectedIndex = this._orientation_select.selectedIndex;
+    this.spanning = this._orientation_select[selectedIndex].value
     this._updateConfig();
   }
 
+  get spanning() {
+    return this._spanning;
+  }
+
+  set spanning(value) {
+    switch(value) {
+      case "none":
+      case "single-fold-vertical":
+        this._orientation_select.selectedIndex = 0;
+        break;
+      case "single-fold-horizontal":
+        this._orientation_select.selectedIndex = 1;
+        break;
+      default:
+        value = "none";
+        this._orientation_select.selectedIndex = 0;
+    }
+    this._spanning = value;
+  }
+
   _deviceTypeChanged(event) {
-    let selectedIndex = this._device_type.selectedIndex;
-    let deviceType = this._device_type[selectedIndex].value;
+    let selectedIndex = this._device_type_select.selectedIndex;
+    let deviceType = this._device_type_select[selectedIndex].value;
     window.removeEventListener('resize', this._resizeHandler);
     this._resizeHandler = null;
     switch(deviceType) {
@@ -198,20 +200,18 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = false;
         break;
       case 'neo':
-        this.orientation = "vertical";
-        this._spanning = 'single-fold-vertical';
-        this._fold_width = '24';
-        this._updateConfig();
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
+        this.spanning = 'single-fold-vertical';
+        this.foldWidth = 24;
+        this._updateConfig();
         break;
       case 'duo':
-        this.orientation = "vertical"
-        this._spanning = 'single-fold-vertical';
-        this._fold_width = '28';
-        this._updateConfig();
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
+        this.spanning = 'single-fold-vertical';
+        this.foldWidth = 28;
+        this._updateConfig();
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
@@ -221,20 +221,22 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = true;
         break;
       default:
-        this._spanning = 'none';
-        this._fold_width = '0';
-        this._updateConfig();
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
+        this.spanning = 'none';
+        this.foldWidth = 0;
+        this._updateConfig();
     }
   }
 
   _updateConfig() {
-    this._foldable_config.update({
-      spanning: this._spanning,
-      foldSize: this._fold_width,
+    const config = {
+      spanning: this.spanning,
+      foldSize: this.foldWidth,
       browserShellSize: this._browser_shell_size
-    });
+    }
+    console.table(config);
+    this._foldable_config.update(config);
   }
 
   _debounce(fn, wait) {
@@ -272,8 +274,8 @@ class FoldableDeviceConfigurator extends LitElement {
         </select>
         <div class="category">Orientation</div>
         <select id="orientation-select" disabled>
-          <option value="vertical">Vertical</option>
-          <option value="horizontal">Horizontal</option>
+          <option value="single-fold-vertical">Vertical</option>
+          <option value="single-fold-horizontal">Horizontal</option>
         </select>
         <div class="category">Seam width</div>
         <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam" disabled></mwc-slider>
