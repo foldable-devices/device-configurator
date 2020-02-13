@@ -84,9 +84,9 @@ class DetailImage extends LitElement {
     }
 
     img {
-      height: 100%;
-      width: 100%;
-      min-height: 300px;
+      min-height: 70%;
+      height: 70%;
+      width: 90%;
       object-fit: contain;
     }
 
@@ -200,16 +200,6 @@ export class MainApplication extends LitElement {
       user-select: none;
     }
 
-    .loading-img {
-      width: 50px;
-      height: 50px;
-      display: none;
-    }
-
-    .loading-img.visible {
-      display: block;
-    }
-
     .loading {
       min-height: 70%;
       height: 70%;
@@ -217,6 +207,7 @@ export class MainApplication extends LitElement {
       display: flex;
       flex-direction: column;
       justify-content: center;
+      visibility: hidden;
     }
 
     .close {
@@ -292,6 +283,7 @@ export class MainApplication extends LitElement {
       width: var(--span-2-width, 0vw);
       background-color: black;
       color: white;
+      overflow: hidden;
     }
 
     .stripes {
@@ -406,7 +398,6 @@ export class MainApplication extends LitElement {
   _full_img;
   _detail_img;
   _detail_container;
-  _loading_img;
   _detail;
   _detail_select;
 
@@ -414,7 +405,6 @@ export class MainApplication extends LitElement {
     this._full_img = this.shadowRoot.querySelector('#full-img');
     this._detail_img = this.shadowRoot.querySelector('detail-img');
     this._detail_container = this.shadowRoot.querySelector('.detail-container');
-    this._loading_img = this.shadowRoot.querySelector('.loading-img');
     this._detail = this.shadowRoot.querySelector('.detail');
     this._detail_select = this.shadowRoot.querySelector('.detail-select');
   }
@@ -422,7 +412,6 @@ export class MainApplication extends LitElement {
   constructor() {
     super();
     this._full_view_container_classes = { hidden: true };
-    this._loading_classes = { visible: false };
   }
 
   _openPicture(e) {
