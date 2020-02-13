@@ -93,7 +93,7 @@ class DetailImage extends LitElement {
 
     mwc-circular-progress {
       position: absolute;
-      margin-top: 40px;
+      top: 50%;
     }
   `;
 
@@ -117,6 +117,7 @@ class DetailImage extends LitElement {
       this._spinner.style.visibility = "visible";
       this._image.addEventListener("load", () => {
         this._spinner.style.visibility = "hidden";
+        this.style.visibility = 'visible';
         this._legend.innerText = this.description;
       }, { once: true });
       this._image.src = this.src;
@@ -424,6 +425,7 @@ export class MainApplication extends LitElement {
       this._detail.style.visibility = 'visible';
       this._detail_img.description = e.currentTarget.children[1].alt;
       this._detail_img.src = path;
+      this._detail_img.style.visibility = 'hidden';
     } else {
       this._full_view_container_classes = { hidden: false };
       this._full_img.setAttribute('src', path);
