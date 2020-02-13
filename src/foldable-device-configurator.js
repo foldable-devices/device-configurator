@@ -4,21 +4,22 @@ import '../web_modules/@material/mwc-slider.js';
 class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
     :host {
+      z-index: 9999;
       position: absolute;
-      width: 350px;
+      width: 300px;
+      font-size: 12px;
       background-color: white;
-      box-shadow: 0px 0px 10px 10px #000000;
-      top: 10px;
-      left: 10px;
+      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+      top: 16px;
+      right: 16px;
       border: 1px solid grey;
       overscroll-behavior: contain;
     }
 
     #header {
-      background-color: black;
-      color: white;
-      height: 40px;
-      font-size: 1.2em;
+      background-color: #f2f2f2;
+      border-bottom: 1px solid #cccccc;
+      height: 28px;
       cursor: move;
       display: flex;
       justify-content: center;
@@ -28,107 +29,35 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     #content {
-      display: flex;
-      justify-content: center;
-      align-items: left;
-      flex-direction: column;
-    }
-
-    .horizontal {
-      margin-top: 20px;
-      display: flex;
-      justify-content: left;
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: 100px auto;
+      grid-template-rows: auto auto auto;
       align-items: center;
+      justify-items: start;
     }
 
-    .select {
-      margin-left: 10px;
-    }
-
-    .category {
-      font-weight: bold;
-      margin-right: 10px;
-      margin-left: 5px;
+    #content > * {
+      margin: 12px 12px 0px 12px;
     }
 
     mwc-slider {
-      margin-left: 10px;
       --mdc-theme-secondary: black;
+      width: calc(100% - 32px);
     }
 
     .close {
       position: absolute;
-      right: 6px;
-      top: 6px;
-      width: 30px;
-      height: 30px;
-      opacity: 0.3;
-      background-color: white;
+      right: 5px;
+      top: 5px;
+      width: 18px;
+      height: 18px;
+      opacity: 0.5;
       cursor: initial;
     }
 
     .close:hover {
       opacity: 1;
     }
-
-    .close:before, .close:after {
-      position: absolute;
-      left: 14px;
-      content: ' ';
-      height: 31px;
-      width: 2px;
-      background-color: #333;
-    }
-
-    .close:before {
-      transform: rotate(45deg);
-    }
-
-    .close:after {
-      transform: rotate(-45deg);
-    }
-
-    @media (min-width: 320px) and (max-width: 1024px) {
-      :host {
-        position: absolute;
-        width: 250px;
-      }
-
-      #header {
-        height: 25px;
-        font-size: 0.9em;
-      }
-
-      .close {
-        width: 16px;
-        height: 16px;
-        right: 5px;
-        top: 5px;
-      }
-
-      .close:before, .close:after {
-        left: 7px;
-        height: 16px;
-      }
-
-      mwc-slider {
-        margin-left: 5px;
-      }
-
-      .horizontal {
-        margin-top: 10px;
-        font-size: 0.8em;
-      }
-
-      .category {
-        font-size: 0.8em;
-        margin-right: 5px;
-        margin-left: 5px;
-      }
-
-    }
-
   `;
 
   _header;
@@ -161,6 +90,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._spanning = 'none';
     this._fold_width = '0';
     this._browser_shell_size = '0';
+
     this._disableFoldableControls();
     this._updateConfig();
   }
@@ -208,8 +138,8 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   // This is REALLY BAD, it needs to be in the polyfill (so we can support
-  // non equally split screens). Also this is only working for the demo because
-  // it mess with its variables (rather than touching the polyfill variables but
+  // not equally sized split screens). Also this is only working for the demo because
+  // it messes with its variables (rather than touching the polyfill variables but
   // these are already rewritten by the time I hit this handler).
   // Hey it's all WIP and research, don't complain.
   _handleAsusSpanning() {
@@ -248,31 +178,28 @@ class FoldableDeviceConfigurator extends LitElement {
     window.removeEventListener('resize', this._resizeHandler);
     this._resizeHandler = null;
     switch(deviceType) {
-      case 'standard':
-        this._spanning = 'none';
-        this._fold_width = '0';
-        this._updateConfig();
-        this._disableFoldableControls();
+      case 'custom':
+        this._enableFoldableControls();
         break;
       case 'neo':
-        this._enableFoldableControls();
         this._vertical_button.checked = true;
         this._spanning = 'single-fold-vertical';
         this._fold_width = '24';
         this._updateConfig();
+        this._disableFoldableControls();
         break;
       case 'duo':
-        this._enableFoldableControls();
         this._vertical_button.checked = true;
         this._spanning = 'single-fold-vertical';
         this._fold_width = '28';
         this._updateConfig();
+        this._disableFoldableControls();
         break;
       case 'asus':
-        this._disableFoldableControls();
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
         this._handleAsusSpanning();
+        this._disableFoldableControls();
         break;
       default:
         this._spanning = 'none';
@@ -280,6 +207,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._horizontal_button.disabled = true;
         this._fold_width = '0';
         this._updateConfig();
+        this._disableFoldableControls();
     }
   }
 
@@ -319,27 +247,30 @@ class FoldableDeviceConfigurator extends LitElement {
   render() {
     return html`
     <div id="wrapper">
-      <div class="close" @click="${this._closeConfigurator}"></div>
-      <div id="header">Foldable Device Configurator</div>
+      <div class="close" @click="${this._closeConfigurator}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+          <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
+        </svg>
+      </div>
+      <div id="header">Foldable Screen</div>
       <div id="content">
-        <div class="horizontal">
-          <div class="category">Device type :</div>
-            <select class="select">
-              <option value="standard">Standard</option>
-              <option value="neo">Surface Neo</option>
-              <option value="duo">Surface Duo</option>
-              <option value="asus">Asus Zenbook Pro Duo</option>
-            </select>
+        <div class="category">Dual Screen</div>
+        <select class="select">
+          <option value="standard">Off</option>
+          <option value="custom">Custom...</options>
+          <optgroup label="Presets">
+            <option value="neo">Surface Neo</option>
+            <option value="duo">Surface Duo</option>
+            <option value="asus">Asus Zenbook Pro Duo</option>
+          </optgroup>
+        </select>
+        <div class="category">Orientation</div>
+        <div>
+          Vertical: <input type="radio" name="orientation" value="1" checked id="vertical"/>
+          Horizontal: <input type="radio" name="orientation" value="2" id="horizontal"/>
         </div>
-        <div class="horizontal">
-          <div class="category">Orientation :</div>
-            Vertical : <input type="radio" name="orientation" value="1" checked id="vertical"/>
-            Horizontal : <input type="radio" name="orientation" value="2" id="horizontal"/>
-        </div>
-        <div class="horizontal">
-          <div class="category">Seam size :</div>
-            <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam"></mwc-slider>
-        </div>
+        <div class="category">Seam width</div>
+        <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam"></mwc-slider>
       </div>
     </div>`;
   }
