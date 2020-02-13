@@ -84,8 +84,8 @@ class DetailImage extends LitElement {
     }
 
     img {
-      min-height: 70%;
-      height: 70%;
+      min-height: 75%;
+      height: 90%;
       width: 90%;
       object-fit: contain;
       margin-top: 40px;
@@ -416,8 +416,8 @@ export class MainApplication extends LitElement {
   }
 
   _openPicture(e) {
-    let source_image = e.currentTarget.children[1].currentSrc;
-    let path = source_image.replace('-l', '');
+    const source_image = e.currentTarget.children[1].currentSrc;
+    const path = source_image.replace('-l', '');
 
     if (window.getComputedStyle(this._detail_container).width != '0px') {
       this._detail_select.style.display = 'none';
@@ -439,9 +439,9 @@ export class MainApplication extends LitElement {
     event.stopPropagation();
 
     if (this._current_image.parentNode.previousElementSibling) {
-      let previous_node_image = this._current_image.parentNode.previousElementSibling.children[0];
+      const previous_node_image = this._current_image.parentNode.previousElementSibling.children[0];
       let previous_image = previous_node_image.children[1].currentSrc;
-      let path = previous_image.replace('-l', '');
+      const path = previous_image.replace('-l', '');
       this._full_img.setAttribute('src', path);
       this._current_image = previous_node_image;
     }
@@ -451,9 +451,9 @@ export class MainApplication extends LitElement {
     event.stopPropagation();
 
     if (this._current_image.parentNode.nextElementSibling) {
-      let next_node_image = this._current_image.parentNode.nextElementSibling.children[0];
+      const next_node_image = this._current_image.parentNode.nextElementSibling.children[0];
       let next_image = next_node_image.children[1].currentSrc;
-      let path = next_image.replace('-l', '');
+      const path = next_image.replace('-l', '');
       this._full_img.setAttribute('src', path);
       this._current_image = next_node_image;
     }

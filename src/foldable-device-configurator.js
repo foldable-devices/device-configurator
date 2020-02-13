@@ -109,8 +109,8 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   _pointerMove = async (event) => {
-    let x = this._position_x - event.clientX;
-    let y = this._position_y - event.clientY;
+    const x = this._position_x - event.clientX;
+    const y = this._position_y - event.clientY;
     this._position_x = event.clientX;
     this._position_y = event.clientY;
     this.shadowRoot.host.style.top = (this.shadowRoot.host.offsetTop - y) + "px";
@@ -138,8 +138,8 @@ class FoldableDeviceConfigurator extends LitElement {
       this.spanning = 'single-fold-horizontal';
       this.foldWidth = 20;
       this._updateConfig();
-      let polyfill = document.styleSheets[document.styleSheets.length - 1];
-      let rule = polyfill.rules[0].cssRules[0];
+      const polyfill = document.styleSheets[document.styleSheets.length - 1];
+      const rule = polyfill.rules[0].cssRules[0];
       // This is specific to the demo :(, really bad.
       rule.style.setProperty('--span-1-height', "460px");
       rule.style.setProperty('--span-2-height', "715px");
@@ -190,8 +190,8 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   _deviceTypeChanged(event) {
-    let selectedIndex = this._device_type_select.selectedIndex;
-    let deviceType = this._device_type_select[selectedIndex].value;
+    const selectedIndex = this._device_type_select.selectedIndex;
+    const deviceType = this._device_type_select[selectedIndex].value;
     window.removeEventListener('resize', this._resizeHandler);
     this._resizeHandler = null;
     switch(deviceType) {
