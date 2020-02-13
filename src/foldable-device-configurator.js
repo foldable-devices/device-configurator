@@ -78,12 +78,12 @@ class FoldableDeviceConfigurator extends LitElement {
     this._foldable_config = window["__foldables_env_vars__"];
     this._header = this.shadowRoot.querySelector('#header');
     this._device_type = this.shadowRoot.querySelector('#device-select');
-    this._orientation = this.shadowRoot.querySelector('#orientation-select');
+    this._orientation_select = this.shadowRoot.querySelector('#orientation-select');
     this._seam_slider = this.shadowRoot.getElementById("seam");
 
     this._header.onpointerdown = this._startDrag;
     this._device_type.onchange = this._deviceTypeChanged.bind(this);
-    this._orientation.onchange = this._orientationChanged.bind(this);
+    this._orientation_select.onchange = this._orientationChanged.bind(this);
     this._seam_slider.oninput = this._seamValueUpdated;
 
     this._browser_shell_size = '0';
@@ -91,7 +91,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._fold_width = '0';
     this._browser_shell_size = '0';
 
-    this._orientation.disabled = true;
+    this._orientation_select.disabled = true;
     this._seam_slider.disabled = true;
     this._updateConfig();
   }
@@ -121,16 +121,6 @@ class FoldableDeviceConfigurator extends LitElement {
     this._header.onpointerup = null;
     this._header.onpointermove = null;
     this._header.releasePointerCapture(this._pointerId);
-  }
-
-  _verticalSelected = async () => {
-    this._spanning = 'single-fold-vertical';
-    this._updateConfig();
-  }
-
-  _horizontalSelected = async () => {
-    this._spanning = 'single-fold-horizontal';
-    this._updateConfig();
   }
 
   _onResize = async (event) => {
@@ -173,24 +163,28 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   get orientation() {
-    const selectedIndex = this._orientation.selectedIndex;
-    return this._orientation[selectedIndex].value;
+    const selectedIndex = this._orientation_select.selectedIndex;
+    return this._orientation_select[selectedIndex].value;
   }
 
   set orientation(value) {
     switch(value) {
       case "vertical":
-        this._orientation.selectedIndex = 0;
+        this._orientation_select.selectedIndex = 0;
         break;
       case "horizontal":
-        this._orientation.selectedIndex = 1;
+        this._orientation_select.selectedIndex = 1;
         break;
     }
   }
 
   _orientationChanged(event) {
-    let selectedIndex = this._orientation.selectedIndex;
-    let orientation = this._orientation[selectedIndex].value;
+    let selected_orientation = this.orientation;
+    if (selected_orientation === 'vertical')
+      this._spanning = 'single-fold-vertical';
+    if (selected_orientation === 'horizontal')
+      this._spanning = 'single-fold-horizontal';
+    this._updateConfig();
   }
 
   _deviceTypeChanged(event) {
@@ -200,7 +194,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._resizeHandler = null;
     switch(deviceType) {
       case 'custom':
-        this._orientation.disabled = false;
+        this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
         break;
       case 'neo':
@@ -208,7 +202,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._spanning = 'single-fold-vertical';
         this._fold_width = '24';
         this._updateConfig();
-        this._orientation.disabled = false;
+        this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         break;
       case 'duo':
@@ -216,21 +210,21 @@ class FoldableDeviceConfigurator extends LitElement {
         this._spanning = 'single-fold-vertical';
         this._fold_width = '28';
         this._updateConfig();
-        this._orientation.disabled = false;
+        this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
         this._handleAsusSpanning();
-        this._orientation.disabled = false;
+        this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         break;
       default:
         this._spanning = 'none';
         this._fold_width = '0';
         this._updateConfig();
-        this._orientation.disabled = true;
+        this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
     }
   }
