@@ -7,9 +7,9 @@ class FoldableDeviceConfigurator extends LitElement {
       position: absolute;
       width: 350px;
       background-color: white;
-      box-shadow: 0px 0px 10px 10px #000000;
-      top: 10px;
-      left: 10px;
+      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+      top: 16px;
+      right: 16px;
       border: 1px solid grey;
       overscroll-behavior: contain;
     }
@@ -161,6 +161,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._spanning = 'none';
     this._fold_width = '0';
     this._browser_shell_size = '0';
+
     this._disableFoldableControls();
     this._updateConfig();
   }
@@ -208,8 +209,8 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   // This is REALLY BAD, it needs to be in the polyfill (so we can support
-  // non equally split screens). Also this is only working for the demo because
-  // it mess with its variables (rather than touching the polyfill variables but
+  // not equally sized split screens). Also this is only working for the demo because
+  // it messes with its variables (rather than touching the polyfill variables but
   // these are already rewritten by the time I hit this handler).
   // Hey it's all WIP and research, don't complain.
   _handleAsusSpanning() {
@@ -323,7 +324,7 @@ class FoldableDeviceConfigurator extends LitElement {
       <div id="header">Foldable Device Configurator</div>
       <div id="content">
         <div class="horizontal">
-          <div class="category">Device type :</div>
+          <div class="category">Device type:</div>
             <select class="select">
               <option value="standard">Standard</option>
               <option value="neo">Surface Neo</option>
@@ -332,12 +333,12 @@ class FoldableDeviceConfigurator extends LitElement {
             </select>
         </div>
         <div class="horizontal">
-          <div class="category">Orientation :</div>
-            Vertical : <input type="radio" name="orientation" value="1" checked id="vertical"/>
-            Horizontal : <input type="radio" name="orientation" value="2" id="horizontal"/>
+          <div class="category">Orientation:</div>
+            Vertical: <input type="radio" name="orientation" value="1" checked id="vertical"/>
+            Horizontal: <input type="radio" name="orientation" value="2" id="horizontal"/>
         </div>
         <div class="horizontal">
-          <div class="category">Seam size :</div>
+          <div class="category">Seam/hinge size:</div>
             <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam"></mwc-slider>
         </div>
       </div>
