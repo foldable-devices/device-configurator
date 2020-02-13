@@ -423,6 +423,8 @@ export class MainApplication extends LitElement {
     if (window.getComputedStyle(this._detail_container).width != '0px') {
       this._detail_select.style.display = 'none';
       this._detail.style.visibility = 'visible';
+      if (this._detail_img.src === path)
+        return;
       this._detail_img.description = e.currentTarget.children[1].alt;
       this._detail_img.src = path;
       this._detail_img.style.visibility = 'hidden';
