@@ -77,15 +77,15 @@ class FoldableDeviceConfigurator extends LitElement {
   firstUpdated() {
     this._foldable_config = window["__foldables_env_vars__"];
     this._header = this.shadowRoot.querySelector('#header');
-    this._device_type = this.shadowRoot.querySelector('.select');
-    this._horizontal_button = this.shadowRoot.getElementById("horizontal");
-    this._vertical_button = this.shadowRoot.getElementById("vertical");
+    this._device_type = this.shadowRoot.querySelector('#device-select');
+    this._orientation = this.shadowRoot.querySelector('#orientation-select');
     this._seam_slider = this.shadowRoot.getElementById("seam");
+
     this._header.onpointerdown = this._startDrag;
-    this._device_type.onchange = this._deviceTypeChanged;
-    this._horizontal_button.oninput = this._horizontalSelected;
-    this._vertical_button.oninput = this._verticalSelected;
+    this._device_type.onchange = this._deviceTypeChanged.bind(this);
+    this._orientation.onchange = this._orientationChanged.bind(this);
     this._seam_slider.oninput = this._seamValueUpdated;
+
     this._browser_shell_size = '0';
     this._spanning = 'none';
     this._fold_width = '0';
@@ -94,7 +94,6 @@ class FoldableDeviceConfigurator extends LitElement {
     this._disableFoldableControls();
     this._updateConfig();
   }
-
 
   _startDrag = async (event) => {
     this._position_x = event.clientX;
@@ -163,64 +162,76 @@ class FoldableDeviceConfigurator extends LitElement {
     if (event.target.value == 0)
       this._spanning = 'none';
     else {
-      if (this._vertical_button.checked)
+      if (this.orientation === "vertical")
         this._spanning = 'single-fold-vertical';
-      if (this._horizontal_button.checked)
+      if (this.orientation === "horizontal")
         this._spanning = 'single-fold-horizontal';
     }
     this._fold_width = event.target.value;
     this._updateConfig();
   }
 
-  _deviceTypeChanged = async (event) => {
+  get orientation() {
+    const selectedIndex = this._orientation.selectedIndex;
+    return this._orientation[selectedIndex].value;
+  }
+
+  set orientation(value) {
+    switch(value) {
+      case "vertical":
+        this._orientation.selectedIndex = 0;
+        break;
+      case "horizontal":
+        this._orientation.selectedIndex = 1;
+        break;
+    }
+  }
+
+  _orientationChanged(event) {
+    let selectedIndex = this._orientation.selectedIndex;
+    let orientation = this._orientation[selectedIndex].value;
+  }
+
+  _deviceTypeChanged(event) {
     let selectedIndex = this._device_type.selectedIndex;
     let deviceType = this._device_type[selectedIndex].value;
     window.removeEventListener('resize', this._resizeHandler);
     this._resizeHandler = null;
     switch(deviceType) {
       case 'custom':
-        this._enableFoldableControls();
+        this._orientation.disabled = false;
+        this._seam_slider.disabled = false;
         break;
       case 'neo':
-        this._vertical_button.checked = true;
+        this.orientation = "vertical";
         this._spanning = 'single-fold-vertical';
         this._fold_width = '24';
         this._updateConfig();
-        this._disableFoldableControls();
+        this._orientation.disabled = false;
+        this._seam_slider.disabled = true;
         break;
       case 'duo':
-        this._vertical_button.checked = true;
+        this.orientation = "vertical"
         this._spanning = 'single-fold-vertical';
         this._fold_width = '28';
         this._updateConfig();
-        this._disableFoldableControls();
+        this._orientation.disabled = false;
+        this._seam_slider.disabled = true;
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
         this._handleAsusSpanning();
-        this._disableFoldableControls();
+        this._orientation.disabled = false;
+        this._seam_slider.disabled = true;
         break;
       default:
         this._spanning = 'none';
-        this._vertical_button.disabled = true;
-        this._horizontal_button.disabled = true;
         this._fold_width = '0';
         this._updateConfig();
-        this._disableFoldableControls();
+        this._orientation.disabled = true;
+        this._seam_slider.disabled = true;
     }
-  }
-
-  _disableFoldableControls() {
-    this._vertical_button.disabled = true;
-    this._horizontal_button.disabled = true;
-    this._seam_slider.disabled = true;
-  }
-
-  _enableFoldableControls() {
-    this._vertical_button.disabled = false;
-    this._horizontal_button.disabled = false;
-    this._seam_slider.disabled = false;
   }
 
   _updateConfig() {
@@ -255,9 +266,9 @@ class FoldableDeviceConfigurator extends LitElement {
       <div id="header">Foldable Screen</div>
       <div id="content">
         <div class="category">Dual Screen</div>
-        <select class="select">
+        <select id="device-select">
           <option value="standard">Off</option>
-          <option value="custom">Custom...</options>
+          <option value="custom">Custom...</option>
           <optgroup label="Presets">
             <option value="neo">Surface Neo</option>
             <option value="duo">Surface Duo</option>
@@ -265,12 +276,12 @@ class FoldableDeviceConfigurator extends LitElement {
           </optgroup>
         </select>
         <div class="category">Orientation</div>
-        <div>
-          Vertical: <input type="radio" name="orientation" value="1" checked id="vertical"/>
-          Horizontal: <input type="radio" name="orientation" value="2" id="horizontal"/>
-        </div>
+        <select id="orientation-select" disabled>
+          <option value="vertical">Vertical</option>
+          <option value="horizontal">Horizontal</option>
+        </select>
         <div class="category">Seam width</div>
-        <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam"></mwc-slider>
+        <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam" disabled></mwc-slider>
       </div>
     </div>`;
   }
