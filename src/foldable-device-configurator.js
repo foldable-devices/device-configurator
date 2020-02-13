@@ -91,7 +91,8 @@ class FoldableDeviceConfigurator extends LitElement {
     this._fold_width = '0';
     this._browser_shell_size = '0';
 
-    this._disableFoldableControls();
+    this._orientation.disabled = true;
+    this._seam_slider.disabled = true;
     this._updateConfig();
   }
 
