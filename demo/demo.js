@@ -88,6 +88,7 @@ class DetailImage extends LitElement {
       height: 70%;
       width: 90%;
       object-fit: contain;
+      margin-top: 20px;
     }
 
     mwc-circular-progress {
