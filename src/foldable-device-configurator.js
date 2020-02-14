@@ -11,7 +11,7 @@ class FoldableDeviceConfigurator extends LitElement {
       background-color: white;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
       top: 16px;
-      right: 16px;
+      right: 80px;
       border: 1px solid grey;
       overscroll-behavior: contain;
     }
@@ -198,12 +198,17 @@ class FoldableDeviceConfigurator extends LitElement {
       case 'custom':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
+        this.spanning = 'single-fold-vertical';
+        this.foldWidth = 24;
+        this._seam_slider.value = 24;
+        this._updateConfig();
         break;
       case 'neo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this.spanning = 'single-fold-vertical';
         this.foldWidth = 24;
+        this._seam_slider.value = 24;
         this._updateConfig();
         break;
       case 'duo':
@@ -211,6 +216,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = true;
         this.spanning = 'single-fold-vertical';
         this.foldWidth = 28;
+        this._seam_slider.value = 28;
         this._updateConfig();
         break;
       case 'asus':
