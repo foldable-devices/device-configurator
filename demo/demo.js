@@ -342,7 +342,7 @@ export class MainApplication extends LitElement {
         height: env(fold-height);
         width: env(fold-width);
       }
-      .wrapper {
+      :host {
         flex-direction: row;
       }
       .detail-container {
@@ -360,7 +360,7 @@ export class MainApplication extends LitElement {
         height: env(fold-height);
         width: env(fold-width);
       }
-      .wrapper {
+      :host {
         flex-direction: column-reverse;
       }
       .detail-container {
@@ -378,7 +378,7 @@ export class MainApplication extends LitElement {
         height: 0;
         width: 0;
       }
-      .wrapper {
+      :host {
         flex-direction: row;
       }
       .detail-container {
