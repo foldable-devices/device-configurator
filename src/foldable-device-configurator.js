@@ -6,7 +6,8 @@ class FoldableDeviceConfigurator extends LitElement {
     :host {
       z-index: 9999;
       position: absolute;
-      width: 300px;
+      width: 720px;
+      height: 650px;
       font-size: 12px;
       background-color: white;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -14,6 +15,8 @@ class FoldableDeviceConfigurator extends LitElement {
       right: 80px;
       border: 1px solid grey;
       overscroll-behavior: contain;
+
+      --device-screen1-width: 1350px;
     }
 
     #header {
@@ -58,6 +61,118 @@ class FoldableDeviceConfigurator extends LitElement {
     .close:hover {
       opacity: 1;
     }
+
+    #preview {
+      transform: scale(0.25);
+      transform-origin: top left;
+    }
+
+    .device {
+      width: calc(2744px);
+      height: calc(1800px);
+      /* display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center; */
+      padding: 28px 18px;
+      box-sizing: border-box;
+    }
+
+    .screen {
+      border: 1px solid #adaaaa;
+      border-width: 14px 14px;
+      border-radius: 40px;
+      width: calc(var(--device-screen1-width));
+      min-width: calc(var(--device-screen1-width));
+      height: 1800px;
+      pointer-events: none;
+      background-color: black;
+      position: absolute;
+      box-sizing: border-box;
+    }
+
+    .screen-left::before {
+      content: "";
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      border-radius: 40px;
+      border-right: 24px solid black;
+      border-left: 48px solid black;
+      border-top: 58px solid black;
+      border-bottom: 58px solid black;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      box-sizing: border-box;
+    }
+
+    .screen-right::before {
+      content: "";
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      border-radius: 40px;
+      border-right: 48px solid black;
+      border-left: 24px solid black;
+      border-top: 58px solid black;
+      border-bottom: 58px solid black;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      box-sizing: border-box;
+    }
+
+
+    .screen-left {
+      left: 0px;
+      top: 0px;
+    }
+
+    .screen-right {
+      left: calc(var(--device-screen1-width) + 44px);
+      top: 0px;
+    }
+
+    .screen-left {
+      left: 0px;
+      top: 0px;
+    }
+
+
+    #fold {
+      width: 48px;
+      height: calc(1750px);
+      z-index: 10;
+      top: 26px;
+      background-color: white;
+      position: absolute;
+      left: calc(var(--device-screen1-width) - 16px);
+      border-left: 14px solid #adaaaa;
+      border-right: 14px solid #adaaaa;
+      border-radius: 4px;
+      /* display:none; */
+    }
+
+    #frame-container {
+      width: calc(2750px);
+      height: calc(1800px);
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      border-radius: 40px;
+      border-radius: 40px;
+      z-index: 3;
+    }
+
+    #frame {
+      top: 60px;
+      left: 48px;
+      position: absolute;
+      width: 2700px;
+      height: 1700px;
+      border:none;
+    }
   `;
 
   _header;
@@ -74,7 +189,19 @@ class FoldableDeviceConfigurator extends LitElement {
   _position_y;
   _resizeHandler;
 
+
+  _inIframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+  }
+
   firstUpdated() {
+    if (this._inIframe()) {
+      this.shadowRoot.host.style.display = 'none';
+    }
     this._foldable_config = window["__foldables_env_vars__"];
 
     this._header = this.shadowRoot.querySelector('#header');
@@ -94,7 +221,24 @@ class FoldableDeviceConfigurator extends LitElement {
     this.spanning = 'none';
     this.foldWidth = 0;
 
+    this._preview = this.shadowRoot.querySelector('#preview');
+    this._frame = this.shadowRoot.querySelector('#frame');
+    var DOMURL = self.URL || self.webkitURL || self;
+    console.log(DOMURL)
+    this._frame.src = window.location.href;
     this._updateConfig();
+  }
+
+  _updatePreview = () => {
+    this._previewConfig = this._frame.contentWindow["__foldables_env_vars__"]
+    if (!this._previewConfig)
+      return;
+    const config = {
+      spanning: this.spanning,
+      foldSize: this.foldWidth,
+      browserShellSize: this._browser_shell_size
+    }
+    this._previewConfig.update(config);
   }
 
   _startDrag = async (event) => {
@@ -243,6 +387,7 @@ class FoldableDeviceConfigurator extends LitElement {
     }
     console.table(config);
     this._foldable_config.update(config);
+    this._updatePreview();
   }
 
   _debounce(fn, wait) {
@@ -285,6 +430,16 @@ class FoldableDeviceConfigurator extends LitElement {
         </select>
         <div class="category">Seam width</div>
         <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam" disabled></mwc-slider>
+        <div id="preview">
+          <div class="device">
+            <div class="screen screen-left"></div>
+            <div id="fold"></div>
+            <div class="screen screen-right"></div>
+            <div id="frame-container">
+              <iframe id="frame"></iframe>
+            </div>
+          </div>
+        </div>
       </div>
     </div>`;
   }
