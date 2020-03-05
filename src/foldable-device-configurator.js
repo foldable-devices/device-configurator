@@ -6,8 +6,8 @@ class FoldableDeviceConfigurator extends LitElement {
     :host {
       z-index: 9999;
       position: absolute;
-      width: 720px;
-      height: 650px;
+      width: 670px;
+      height: 600px;
       font-size: 12px;
       background-color: white;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -69,14 +69,13 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     #preview {
-      transform: scale(0.24);
+      transform: scale(0.22);
       transform-origin: top left;
     }
 
     .screen {
-      border: 1px solid #adaaaa;
-      border-width: var(--device-border) var(--device-border);
-      border-radius: 40px;
+      border-top: var(--device-border) solid #adaaaa;
+      border-bottom: var(--device-border) solid #adaaaa;
       width: calc(var(--device-screen1-width) + 2 * var(--device-bezel-horizontal));
       height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-vertical));
       pointer-events: none;
@@ -105,43 +104,60 @@ class FoldableDeviceConfigurator extends LitElement {
     .screen-left {
       left: 0px;
       top: 0px;
+      border-radius: 40px 0px 0px 40px;
+      border-left: var(--device-border) solid #adaaaa;
+      border-right: var(--device-border) solid black;
     }
 
     .screen-right {
       left: calc(var(--device-screen1-width) + 2 * var(--device-border) + 2 * var(--device-bezel-horizontal) + var(--device-fold-width));
       top: 0px;
+      border-radius: 0px 40px 40px 0px;
+      border-right: var(--device-border) solid #adaaaa;
+      border-left: var(--device-border) solid black;
+    }
+
+    .hole {
+      background-color: white;
+      width: 5px;
+      height: 100%;
+    }
+
+    .hinge {
+      background-color: #adaaaa;
+      width: var(--device-fold-width);
+      height: calc(var(--device-bezel-vertical) / 2);
+      border-radius: 5px;
     }
 
     #fold {
-      width: var(--device-fold-width);
-      height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-horizontal));
+      width: calc(var(--device-fold-width) + 2 * var(--device-border));
+      height: calc(var(--device-screen1-height) + 2 *var(--device-bezel-vertical));
       z-index: 10;
-      top: calc(var(--device-bezel-horizontal) + var(--device-border));
-      background-color: white;
+      top: 0;
+      background-color: black;
       position: absolute;
-      left: calc(var(--device-screen1-width) + var(--device-border) + 2 * var(--device-bezel-horizontal));
-      border-left: var(--device-border) solid #adaaaa;
-      border-right: var(--device-border) solid #adaaaa;
-      border-radius: 2px;
-    }
-
-    #frame-container {
-      width: calc( 2 * var(--device-screen1-width) + var(--device-fold-width) + 2 * var(--device-border) + 2 * var(--device-bezel-horizontal));
-      height: var(--device-screen1-height);
-      position: absolute;
-      top: calc(var(--device-border) + var(--device-bezel-vertical));
-      left: calc(var(--device-border) + var(--device-bezel-horizontal));
-      border-radius: 40px;
-      z-index: 3;
+      left: calc(var(--device-screen1-width) + 2* var(--device-bezel-horizontal));
+      border: var(--device-border) solid black;
+      border-top: var(--device-border) solid #adaaaa;
+      border-bottom: var(--device-border) solid #adaaaa;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 30px;
     }
 
     #frame {
       top: 0;
       left: 0;
       position: absolute;
+      top: calc(var(--device-border) + var(--device-bezel-vertical));
+      left: calc(var(--device-border) + var(--device-bezel-horizontal));
       width: calc( 2 * var(--device-screen1-width) + var(--device-fold-width) + 2 * var(--device-border) + 2 * var(--device-bezel-horizontal));
       height: var(--device-screen1-height);
       border:none;
+      z-index: 3;
     }
   `;
 
@@ -402,11 +418,13 @@ class FoldableDeviceConfigurator extends LitElement {
         <div id="preview">
           <div>
             <div class="screen screen-left"></div>
-            <div id="fold"></div>
-            <div class="screen screen-right"></div>
-            <div id="frame-container">
-              <iframe id="frame"></iframe>
+            <div id="fold">
+              <div class="hinge"></div>
+              <div class="hole"></div>
+              <div class="hinge"></div>
             </div>
+            <div class="screen screen-right"></div>
+            <iframe id="frame"></iframe>
           </div>
         </div>
       </div>
