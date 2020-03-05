@@ -6,7 +6,7 @@ class FoldableDeviceConfigurator extends LitElement {
     :host {
       z-index: 9999;
       position: absolute;
-      width: 670px;
+      width: 650px;
       height: 600px;
       font-size: 12px;
       background-color: white;
@@ -19,7 +19,7 @@ class FoldableDeviceConfigurator extends LitElement {
       /* Surface Duo */
       --device-screen1-width: 1350px;
       --device-screen1-height: 1800px;
-      --device-border: 12px;
+      --device-border: 15px;
       --device-bezel-vertical: 58px;
       --device-bezel-horizontal: 24px;
       --device-fold-width: 84px;
@@ -73,48 +73,24 @@ class FoldableDeviceConfigurator extends LitElement {
       transform-origin: top left;
     }
 
+    .device {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      width: calc( 2 * var(--device-screen1-width) + var(--device-fold-width) + 2 * var(--device-bezel-horizontal));
+      height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-vertical));
+      background-color: black;
+      border-radius: 40px;
+      border: var(--device-border) solid #979696;
+      /* transform: rotate(90deg); */
+    }
+
     .screen {
-      border-top: var(--device-border) solid #adaaaa;
-      border-bottom: var(--device-border) solid #adaaaa;
       width: calc(var(--device-screen1-width) + 2 * var(--device-bezel-horizontal));
       height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-vertical));
       pointer-events: none;
       background-color: black;
-      position: absolute;
-    }
-
-    .screen::before {
-      content: "";
-      position: absolute;
-      top: 0px;
-      left: 0px;
       border-radius: 40px;
-      border-right: var(--device-bezel-horizontal);
-      border-left: var(--device-bezel-horizontal);
-      border-top: var(--device-bezel-vertical);
-      border-bottom: var(--device-bezel-vertical);
-      border-style: solid;
-      border-color: black;
-      width: calc(var(--device-screen1-width));
-      height: calc(var(--device-screen1-height));
-      z-index: 4;
-      border-color: black;
-    }
-
-    .screen-left {
-      left: 0px;
-      top: 0px;
-      border-radius: 40px 0px 0px 40px;
-      border-left: var(--device-border) solid #adaaaa;
-      border-right: var(--device-border) solid black;
-    }
-
-    .screen-right {
-      left: calc(var(--device-screen1-width) + 2 * var(--device-border) + 2 * var(--device-bezel-horizontal) + var(--device-fold-width));
-      top: 0px;
-      border-radius: 0px 40px 40px 0px;
-      border-right: var(--device-border) solid #adaaaa;
-      border-left: var(--device-border) solid black;
     }
 
     .hole {
@@ -124,7 +100,7 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     .hinge {
-      background-color: #adaaaa;
+      background-color: #979696;
       width: var(--device-fold-width);
       height: calc(var(--device-bezel-vertical) / 2);
       border-radius: 5px;
@@ -133,31 +109,28 @@ class FoldableDeviceConfigurator extends LitElement {
     #fold {
       width: calc(var(--device-fold-width) + 2 * var(--device-border));
       height: calc(var(--device-screen1-height) + 2 *var(--device-bezel-vertical));
-      z-index: 10;
-      top: 0;
+      z-index: 6;
       background-color: black;
-      position: absolute;
-      left: calc(var(--device-screen1-width) + 2* var(--device-bezel-horizontal));
       border: var(--device-border) solid black;
-      border-top: var(--device-border) solid #adaaaa;
-      border-bottom: var(--device-border) solid #adaaaa;
+      border-top: var(--device-border) solid #979696;
+      border-bottom: var(--device-border) solid #979696;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      border-radius: 30px;
+      box-sizing: border-box;
+      border-radius: 10px;
     }
 
     #frame {
-      top: 0;
-      left: 0;
       position: absolute;
-      top: calc(var(--device-border) + var(--device-bezel-vertical));
-      left: calc(var(--device-border) + var(--device-bezel-horizontal));
-      width: calc( 2 * var(--device-screen1-width) + var(--device-fold-width) + 2 * var(--device-border) + 2 * var(--device-bezel-horizontal));
+      top: calc(var(--device-bezel-vertical) + var(--device-border));
+      left: calc(var(--device-bezel-horizontal) + var(--device-border));
+      width: calc(2 * var(--device-screen1-width) + var(--device-fold-width));
       height: var(--device-screen1-height);
-      border:none;
       z-index: 3;
+      border: none;
+      border-radius: 15px;
     }
   `;
 
@@ -425,16 +398,16 @@ class FoldableDeviceConfigurator extends LitElement {
         <div class="category">Seam width</div>
         <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
         <div id="preview">
-          <div>
-            <div class="screen screen-left"></div>
+          <div class="device">
+            <div class="screen"></div>
             <div id="fold">
               <div class="hinge"></div>
               <div class="hole"></div>
               <div class="hinge"></div>
             </div>
-            <div class="screen screen-right"></div>
-            <iframe id="frame"></iframe>
+            <div class="screen"></div>
           </div>
+          <iframe id="frame"></iframe>
         </div>
       </div>
     </div>`;
