@@ -355,6 +355,14 @@ class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         break;
+      case 'hsb':
+        this._orientation_select.disabled = false;
+        this._seam_slider.disabled = false;
+        this.spanning = 'single-fold-horizontal';
+        this.foldWidth = 114;
+        this._seam_slider.value = 114;
+        this._updateConfig();
+          break;
       default:
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
@@ -406,6 +414,7 @@ class FoldableDeviceConfigurator extends LitElement {
             <option value="neo">Surface Neo</option>
             <option value="duo">Surface Duo</option>
             <option value="asus">Asus Zenbook Pro Duo</option>
+            <option value="hsb">HSB</option>
           </optgroup>
         </select>
         <div class="category">Orientation</div>
@@ -414,7 +423,7 @@ class FoldableDeviceConfigurator extends LitElement {
           <option value="single-fold-horizontal">Horizontal</option>
         </select>
         <div class="category">Seam width</div>
-        <mwc-slider markers pin step="5" value="30" min="0" max="100" id="seam" disabled></mwc-slider>
+        <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
         <div id="preview">
           <div>
             <div class="screen screen-left"></div>
