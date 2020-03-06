@@ -41,7 +41,7 @@ class FoldableDeviceConfigurator extends LitElement {
     #content {
       display: grid;
       grid-template-columns: 100px auto;
-      grid-template-rows: auto auto auto;
+      grid-template-rows: auto auto;
       align-items: center;
       justify-items: start;
     }
@@ -52,7 +52,16 @@ class FoldableDeviceConfigurator extends LitElement {
 
     mwc-slider {
       --mdc-theme-secondary: black;
+      width: 80%;
+      margin-left: 12px;
+    }
+
+    #seam-container {
+      grid-column: span 2;
+      justify-content: flex-start;
+      align-items: center;
       width: calc(100% - 32px);
+      display: none;
     }
 
     .close {
@@ -140,6 +149,7 @@ class FoldableDeviceConfigurator extends LitElement {
   _device_type_select;
   _orientation_select;
   _seam_slider;
+  _seam_container;
 
   _spanning;
   _fold_width;
@@ -169,6 +179,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._device_type_select = this.shadowRoot.querySelector('#device-select');
     this._orientation_select = this.shadowRoot.querySelector('#orientation-select');
     this._seam_slider = this.shadowRoot.getElementById("seam");
+    this._seam_container = this.shadowRoot.getElementById("seam-container");
 
     this._header.onpointerdown = this._startDrag.bind(this);
     this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
@@ -328,27 +339,27 @@ class FoldableDeviceConfigurator extends LitElement {
     this._resizeHandler = null;
     switch(deviceType) {
       case 'custom':
+        this._seam_container.style.display = 'flex';
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
         this.spanning = 'single-fold-vertical';
         this.foldWidth = 24;
-        this._seam_slider.value = 24;
         this._updateConfig();
         break;
       case 'neo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
+        this._seam_container.style.display = 'none';
         this.spanning = 'single-fold-vertical';
         this.foldWidth = 24;
-        this._seam_slider.value = 24;
         this._updateConfig();
         break;
       case 'duo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
+        this._seam_container.style.display = 'none';
         this.spanning = 'single-fold-vertical';
         this.foldWidth = 28;
-        this._seam_slider.value = 28;
         this._updateConfig();
         break;
       case 'asus':
@@ -357,18 +368,20 @@ class FoldableDeviceConfigurator extends LitElement {
         this._handleAsusSpanning();
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
+        this._seam_container.style.display = 'none';
         break;
       case 'hsb':
         this._orientation_select.disabled = false;
+        this._seam_container.style.display = 'flex';
         this._seam_slider.disabled = false;
         this.spanning = 'single-fold-horizontal';
         this.foldWidth = 114;
-        this._seam_slider.value = 114;
         this._updateConfig();
           break;
       default:
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
+        this._seam_container.style.display = 'none';
         this.spanning = 'none';
         this.foldWidth = 0;
         this._updateConfig();
@@ -383,6 +396,7 @@ class FoldableDeviceConfigurator extends LitElement {
     }
     console.table(config);
     this._foldable_config.update(config);
+    this._seam_slider.value = this.foldWidth;
     this._updatePreview();
   }
 
@@ -397,6 +411,7 @@ class FoldableDeviceConfigurator extends LitElement {
   _closeConfigurator() {
     this.shadowRoot.host.style.visibility = 'hidden';
     this._seam_slider.style.display = 'none';
+    this._preview.style.display = 'none';
   }
 
   render() {
@@ -425,8 +440,10 @@ class FoldableDeviceConfigurator extends LitElement {
           <option value="single-fold-vertical">Vertical</option>
           <option value="single-fold-horizontal">Horizontal</option>
         </select>
-        <div class="category">Seam width</div>
-        <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
+        <div id="seam-container">
+          <div class="category">Seam width</div>
+          <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
+        </div>
         <div id="preview">
           <div id="device">
             <div class="screen"></div>
