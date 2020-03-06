@@ -73,7 +73,7 @@ class FoldableDeviceConfigurator extends LitElement {
       transform-origin: top left;
     }
 
-    .device {
+    #device {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
@@ -82,7 +82,7 @@ class FoldableDeviceConfigurator extends LitElement {
       background-color: black;
       border-radius: 40px;
       border: var(--device-border) solid #979696;
-      /* transform: rotate(90deg); */
+      transform-origin: top left;
     }
 
     .screen {
@@ -95,7 +95,7 @@ class FoldableDeviceConfigurator extends LitElement {
 
     .hole {
       background-color: white;
-      width: 5px;
+      width: 10px;
       height: 100%;
     }
 
@@ -131,6 +131,7 @@ class FoldableDeviceConfigurator extends LitElement {
       z-index: 3;
       border: none;
       border-radius: 15px;
+      transform-origin: top left;
     }
   `;
 
@@ -181,6 +182,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this.foldWidth = 0;
 
     this._preview = this.shadowRoot.querySelector('#preview');
+    this._device = this.shadowRoot.querySelector('#device');
     this._frame = this.shadowRoot.querySelector('#frame');
     var DOMURL = self.URL || self.webkitURL || self;
     this._frame.src = window.location.href;
@@ -197,6 +199,7 @@ class FoldableDeviceConfigurator extends LitElement {
       browserShellSize: this._browser_shell_size
     }
     this._previewConfig.update(config);
+    this._updatePreviewRotation();
   }
 
   _startDrag = async (event) => {
@@ -269,6 +272,30 @@ class FoldableDeviceConfigurator extends LitElement {
     const selectedIndex = this._orientation_select.selectedIndex;
     this.spanning = this._orientation_select[selectedIndex].value
     this._updateConfig();
+  }
+
+  _updatePreviewRotation() {
+    switch(this.spanning) {
+      case "none":
+      case "single-fold-vertical":
+        this._preview.style.marginLeft = '';
+        this._preview.style.transform = 'scale(0.22)';
+        this._frame.style.transform = '';
+        this._frame.style.top = 'calc(var(--device-bezel-vertical) + var(--device-border))';
+        this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
+        this._frame.style.width = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
+        this._frame.style.height = 'var(--device-screen1-height)';
+        break;
+      case "single-fold-horizontal":
+        this._frame.style.transform = 'rotate(-90deg) translateX(-100%)';
+        this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
+        this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
+        this._frame.style.width = 'var(--device-screen1-height)';
+        this._frame.style.height = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
+        this._preview.style.marginLeft = '170px';
+        this._preview.style.transform = 'scale(0.15) rotate(90deg) translateY(-100%)';
+        break;
+    }
   }
 
   get spanning() {
@@ -398,7 +425,7 @@ class FoldableDeviceConfigurator extends LitElement {
         <div class="category">Seam width</div>
         <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
         <div id="preview">
-          <div class="device">
+          <div id="device">
             <div class="screen"></div>
             <div id="fold">
               <div class="hinge"></div>
