@@ -15,6 +15,7 @@ class FoldableDeviceConfigurator extends LitElement {
       right: 80px;
       border: 1px solid grey;
       overscroll-behavior: contain;
+      transition: height 0.8s ease-in-out;
 
       /* Surface Duo */
       --device-screen1-width: 1350px;
@@ -71,6 +72,7 @@ class FoldableDeviceConfigurator extends LitElement {
     #preview {
       transform: scale(0.15);
       transform-origin: top left;
+      transition: all 1s ease-in-out;
     }
 
     #device {
@@ -82,7 +84,6 @@ class FoldableDeviceConfigurator extends LitElement {
       background-color: black;
       border-radius: 40px;
       border: var(--device-border) solid #979696;
-      transform-origin: top left;
     }
 
     .screen {
@@ -288,6 +289,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this.shadowRoot.host.style.height = '470px';
         break;
       case "single-fold-horizontal":
+        this.shadowRoot.host.style.height = '600px';
         this._frame.style.transform = 'rotate(-90deg) translateX(-100%)';
         this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
         this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
@@ -295,7 +297,6 @@ class FoldableDeviceConfigurator extends LitElement {
         this._frame.style.height = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
         this._preview.style.marginLeft = '80px';
         this._preview.style.transform = 'scale(0.15) rotate(90deg) translateY(-100%)';
-        this.shadowRoot.host.style.height = '600px';
         break;
     }
   }
