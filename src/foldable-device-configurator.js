@@ -7,7 +7,7 @@ class FoldableDeviceConfigurator extends LitElement {
       z-index: 9999;
       position: absolute;
       width: 450px;
-      height: 470px;
+      height: 430px;
       font-size: 12px;
       background-color: white;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -15,7 +15,6 @@ class FoldableDeviceConfigurator extends LitElement {
       right: 80px;
       border: 1px solid grey;
       overscroll-behavior: contain;
-      transition: height 0.8s ease-in-out;
 
       /* Surface Duo */
       --device-screen1-width: 1350px;
@@ -78,10 +77,16 @@ class FoldableDeviceConfigurator extends LitElement {
       opacity: 1;
     }
 
+    #preview-container {
+      height: 300px;
+      width: 450px;
+      grid-column: span 2;
+    }
+
     #preview {
       transform: scale(0.15);
       transform-origin: top left;
-      transition: all 1s ease-in-out;
+      transition: all 0.7s ease-in-out;
     }
 
     #device {
@@ -143,6 +148,13 @@ class FoldableDeviceConfigurator extends LitElement {
       border-radius: 15px;
       transform-origin: top left;
     }
+
+    .legend {
+      font-size : 10px;
+      height: 20px;
+      text-align: center;
+      grid-column: span 2;
+    }
   `;
 
   _header;
@@ -150,6 +162,10 @@ class FoldableDeviceConfigurator extends LitElement {
   _orientation_select;
   _seam_slider;
   _seam_container;
+  _preview;
+  _preview_container;
+  _device;
+  _frame;
 
   _spanning;
   _fold_width;
@@ -194,11 +210,22 @@ class FoldableDeviceConfigurator extends LitElement {
     this.foldWidth = 0;
 
     this._preview = this.shadowRoot.querySelector('#preview');
+    this._preview_container = this.shadowRoot.querySelector("#preview-container");
     this._device = this.shadowRoot.querySelector('#device');
     this._frame = this.shadowRoot.querySelector('#frame');
     var DOMURL = self.URL || self.webkitURL || self;
     this._frame.src = window.location.href;
     this._updateConfig();
+
+    document.addEventListener('keyup', this._handleKeyUp, false);
+  }
+
+  _handleKeyUp = (event) => {
+    if(event.keyCode == 73 && event.ctrlKey) {
+      this.shadowRoot.host.style.visibility = 'visible';
+      this._seam_slider.style.display = 'block';
+      this._preview.style.display = 'flex';
+    }
   }
 
   _updatePreview = () => {
@@ -287,6 +314,8 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   _updatePreviewRotation() {
+    const selectedIndex = this._device_type_select.selectedIndex;
+    const deviceType = this._device_type_select[selectedIndex].value;
     switch(this.spanning) {
       case "none":
       case "single-fold-vertical":
@@ -297,17 +326,27 @@ class FoldableDeviceConfigurator extends LitElement {
         this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
         this._frame.style.width = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
         this._frame.style.height = 'var(--device-screen1-height)';
-        this.shadowRoot.host.style.height = '470px';
+        if (deviceType === 'hsb' || deviceType === 'custom') {
+          this.shadowRoot.host.style.height = '490px';
+        } else {
+          this.shadowRoot.host.style.height = '430px';
+        }
+        this._preview_container.style.height = "300px";
         break;
       case "single-fold-horizontal":
-        this.shadowRoot.host.style.height = '600px';
         this._frame.style.transform = 'rotate(-90deg) translateX(-100%)';
         this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
         this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
         this._frame.style.width = 'var(--device-screen1-height)';
         this._frame.style.height = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
-        this._preview.style.marginLeft = '80px';
+        this._preview.style.marginLeft = '70px';
         this._preview.style.transform = 'scale(0.15) rotate(90deg) translateY(-100%)';
+        if (deviceType === 'hsb' || deviceType === 'custom') {
+          this.shadowRoot.host.style.height = '620px';
+        } else {
+          this.shadowRoot.host.style.height = '560px';
+        }
+        this._preview_container.style.height = "430px";
         break;
     }
   }
@@ -440,22 +479,25 @@ class FoldableDeviceConfigurator extends LitElement {
           <option value="single-fold-vertical">Vertical</option>
           <option value="single-fold-horizontal">Horizontal</option>
         </select>
+        <div id="preview-container">
+          <div id="preview">
+            <div id="device">
+              <div class="screen"></div>
+              <div id="fold">
+                <div class="hinge"></div>
+                <div class="hole"></div>
+                <div class="hinge"></div>
+              </div>
+              <div class="screen"></div>
+            </div>
+            <iframe id="frame"></iframe>
+          </div>
+        </div>
         <div id="seam-container">
           <div class="category">Seam width</div>
           <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
         </div>
-        <div id="preview">
-          <div id="device">
-            <div class="screen"></div>
-            <div id="fold">
-              <div class="hinge"></div>
-              <div class="hole"></div>
-              <div class="hinge"></div>
-            </div>
-            <div class="screen"></div>
-          </div>
-          <iframe id="frame"></iframe>
-        </div>
+        <div class="legend"> If you close the configurator use CTRL + i to show it again </div>
       </div>
     </div>`;
   }
