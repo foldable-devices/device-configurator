@@ -409,7 +409,7 @@ class FoldableDeviceConfigurator extends LitElement {
       </div>
       <div id="header">Foldable Screen</div>
       <div id="content">
-        <div class="category">Dual Screen</div>
+        <div class="category">Device</div>
         <select id="device-select">
           <option value="standard">Off</option>
           <option value="custom">Custom...</option>
