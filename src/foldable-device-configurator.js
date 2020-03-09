@@ -405,7 +405,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
         this._handleAsusSpanning();
-        this._orientation_select.disabled = false;
+        this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
         break;
