@@ -17,12 +17,14 @@ class FoldableDeviceConfigurator extends LitElement {
       overscroll-behavior: contain;
 
       /* Surface Duo */
-      --device-screen1-width: 1350px;
-      --device-screen1-height: 1800px;
-      --device-border: 15px;
-      --device-bezel-vertical: 58px;
-      --device-bezel-horizontal: 24px;
-      --device-fold-width: 84px;
+      --device-screen1-width: 450px;
+      --device-screen2-width: 450px;
+      --device-screen1-height: 600px;
+      --device-screen2-height: 600px;
+      --device-border: 5px;
+      --device-bezel-vertical: 19px;
+      --device-bezel-horizontal: 8px;
+      --device-fold-width: 28px;
     }
 
     #header {
@@ -84,7 +86,7 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     #preview {
-      transform: scale(0.15);
+      transform: scale(0.45);
       transform-origin: top left;
       transition: all 0.7s ease-in-out;
     }
@@ -93,24 +95,33 @@ class FoldableDeviceConfigurator extends LitElement {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      width: calc( 2 * var(--device-screen1-width) + var(--device-fold-width) + 2 * var(--device-bezel-horizontal));
+      width: calc( var(--device-screen2-width) + var(--device-screen1-width) +
+          var(--device-fold-width) + 2 * var(--device-bezel-horizontal));
       height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-vertical));
       background-color: black;
-      border-radius: 40px;
+      border-radius: 10px;
       border: var(--device-border) solid #979696;
     }
 
     .screen {
-      width: calc(var(--device-screen1-width) + 2 * var(--device-bezel-horizontal));
-      height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-vertical));
       pointer-events: none;
       background-color: black;
-      border-radius: 40px;
+      border-radius: 10px;
+    }
+
+    .left {
+      width: calc(var(--device-screen1-width) + 2 * var(--device-bezel-horizontal));
+      height: calc(var(--device-screen1-height) + 2 * var(--device-bezel-vertical));
+    }
+
+    .right {
+      width: calc(var(--device-screen2-width) + 2 * var(--device-bezel-horizontal));
+      height: calc(var(--device-screen2 -height) + 2 * var(--device-bezel-vertical));
     }
 
     .hole {
       background-color: white;
-      width: 10px;
+      width: 5px;
       height: 100%;
     }
 
@@ -141,11 +152,12 @@ class FoldableDeviceConfigurator extends LitElement {
       position: absolute;
       top: calc(var(--device-bezel-vertical) + var(--device-border));
       left: calc(var(--device-bezel-horizontal) + var(--device-border));
-      width: calc(2 * var(--device-screen1-width) + var(--device-fold-width));
+      width: calc(var(--device-screen1-width) + var(--device-screen2-width) +
+        var(--device-fold-width));
       height: var(--device-screen1-height);
       z-index: 3;
       border: none;
-      border-radius: 15px;
+      border-radius: 10px;
       transform-origin: top left;
     }
 
@@ -320,7 +332,7 @@ class FoldableDeviceConfigurator extends LitElement {
       case "none":
       case "single-fold-vertical":
         this._preview.style.marginLeft = '';
-        this._preview.style.transform = 'scale(0.15)';
+        this._preview.style.transform = 'scale(0.45)';
         this._frame.style.transform = '';
         this._frame.style.top = 'calc(var(--device-bezel-vertical) + var(--device-border))';
         this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
@@ -340,7 +352,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._frame.style.width = 'var(--device-screen1-height)';
         this._frame.style.height = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
         this._preview.style.marginLeft = '70px';
-        this._preview.style.transform = 'scale(0.15) rotate(90deg) translateY(-100%)';
+        this._preview.style.transform = 'scale(0.45) rotate(90deg) translateY(-100%)';
         if (deviceType === 'hsb' || deviceType === 'custom') {
           this.shadowRoot.host.style.height = '620px';
         } else {
@@ -482,13 +494,13 @@ class FoldableDeviceConfigurator extends LitElement {
         <div id="preview-container">
           <div id="preview">
             <div id="device">
-              <div class="screen"></div>
+              <div class="screen right"></div>
               <div id="fold">
                 <div class="hinge"></div>
                 <div class="hole"></div>
                 <div class="hinge"></div>
               </div>
-              <div class="screen"></div>
+              <div class="screen left"></div>
             </div>
             <iframe id="frame"></iframe>
           </div>
