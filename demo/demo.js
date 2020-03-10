@@ -247,7 +247,7 @@ export class MainApplication extends LitElement {
       width: var(--span-1-width, 100vw);
       height: var(--span-1-height, 100vh);
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       grid-template-rows: repeat(auto-fit, 1fr);
       grid-gap: 2px;
       background-color: black;

@@ -25,6 +25,7 @@ class FoldableDeviceConfigurator extends LitElement {
       --device-bezel-vertical: 19px;
       --device-bezel-horizontal: 8px;
       --device-fold-width: 28px;
+      --scale-factor: 0.45;
     }
 
     #header {
@@ -86,9 +87,8 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     #preview {
-      transform: scale(0.45);
+      transform: scale(var(--scale-factor));
       transform-origin: top left;
-      transition: all 0.7s ease-in-out;
     }
 
     #device {
@@ -178,6 +178,7 @@ class FoldableDeviceConfigurator extends LitElement {
   _preview_container;
   _device;
   _frame;
+  _currentOrientation;
 
   _spanning;
   _fold_width;
@@ -228,6 +229,7 @@ class FoldableDeviceConfigurator extends LitElement {
     var DOMURL = self.URL || self.webkitURL || self;
     this._frame.src = window.location.href;
     this._updateConfig();
+    this._currentOrientation = 'none';
 
     document.addEventListener('keyup', this._handleKeyUp, false);
   }
@@ -250,7 +252,6 @@ class FoldableDeviceConfigurator extends LitElement {
       browserShellSize: this._browser_shell_size
     }
     this._previewConfig.update(config);
-    this._updatePreviewRotation();
   }
 
   _startDrag = async (event) => {
@@ -323,20 +324,27 @@ class FoldableDeviceConfigurator extends LitElement {
     const selectedIndex = this._orientation_select.selectedIndex;
     this.spanning = this._orientation_select[selectedIndex].value
     this._updateConfig();
+    this._updatePreviewRotation();
   }
 
   _updatePreviewRotation() {
     const selectedIndex = this._device_type_select.selectedIndex;
     const deviceType = this._device_type_select[selectedIndex].value;
+    // We're animating only if we're rotating the device.
+    if (this._spanning != this._currentOrientation) {
+      this._preview.style.transition = 'transform 0.7s ease-in-out';
+      // Only animate the rotation.
+      this._preview.addEventListener('transitionend', this._rotationFinished);
+    }
     switch(this.spanning) {
       case "none":
       case "single-fold-vertical":
         this._preview.style.marginLeft = '';
-        this._preview.style.transform = 'scale(0.45)';
+        this._preview.style.transform = 'scale(var(--scale-factor))';
         this._frame.style.transform = '';
         this._frame.style.top = 'calc(var(--device-bezel-vertical) + var(--device-border))';
         this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
-        this._frame.style.width = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
+        this._frame.style.width = 'calc(var(--device-screen1-width) + var(--device-screen2-width)  + var(--device-fold-width))';
         this._frame.style.height = 'var(--device-screen1-height)';
         if (deviceType === 'hsb' || deviceType === 'custom') {
           this.shadowRoot.host.style.height = '490px';
@@ -350,9 +358,9 @@ class FoldableDeviceConfigurator extends LitElement {
         this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
         this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
         this._frame.style.width = 'var(--device-screen1-height)';
-        this._frame.style.height = 'calc(2 * var(--device-screen1-width) + var(--device-fold-width))';
+        this._frame.style.height = 'calc(var(--device-screen1-width) + var(--device-screen2-width) + var(--device-fold-width))';
         this._preview.style.marginLeft = '70px';
-        this._preview.style.transform = 'scale(0.45) rotate(90deg) translateY(-100%)';
+        this._preview.style.transform = 'scale(var(--scale-factor)) rotate(90deg) translateY(-100%)';
         if (deviceType === 'hsb' || deviceType === 'custom') {
           this.shadowRoot.host.style.height = '620px';
         } else {
@@ -361,6 +369,11 @@ class FoldableDeviceConfigurator extends LitElement {
         this._preview_container.style.height = "430px";
         break;
     }
+    this._currentOrientation = this.spanning;
+  }
+
+  _rotationFinished = (event) => {
+    this._preview.style.transition = '';
   }
 
   get spanning() {
@@ -393,24 +406,33 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_container.style.display = 'flex';
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
-        this.spanning = 'single-fold-vertical';
         this.foldWidth = 24;
+        if (this._spanning === 'none') {
+          this._currentOrientation = this.spanning = 'single-fold-vertical';
+        }
+        this._updatePreviewConfiguration('custom');
         this._updateConfig();
         break;
       case 'neo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
-        this.spanning = 'single-fold-vertical';
         this.foldWidth = 24;
+        if (this._spanning === 'none') {
+          this._currentOrientation = this.spanning = 'single-fold-vertical';
+        }
+        this._updatePreviewConfiguration('neo');
         this._updateConfig();
         break;
       case 'duo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
-        this.spanning = 'single-fold-vertical';
         this.foldWidth = 28;
+        if (this._spanning === 'none') {
+          this._currentOrientation = this.spanning = 'single-fold-vertical';
+        }
+        this._updatePreviewConfiguration('duo');
         this._updateConfig();
         break;
       case 'asus':
@@ -420,13 +442,18 @@ class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
+        this._updatePreviewConfiguration('asus');
+        this._updatePreviewRotation();
         break;
       case 'hsb':
         this._orientation_select.disabled = false;
         this._seam_container.style.display = 'flex';
         this._seam_slider.disabled = false;
-        this.spanning = 'single-fold-horizontal';
         this.foldWidth = 114;
+        if (this._spanning === 'none') {
+          this._currentOrientation = this.spanning = 'single-fold-vertical';
+        }
+        this._updatePreviewConfiguration('hsb');
         this._updateConfig();
           break;
       default:
@@ -435,8 +462,44 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_container.style.display = 'none';
         this.spanning = 'none';
         this.foldWidth = 0;
+        this._updatePreviewConfiguration('duo');
         this._updateConfig();
     }
+  }
+
+  _updatePreviewConfiguration(deviceType){
+    switch(deviceType) {
+      case 'custom':
+        break;
+      case 'neo':
+        this.shadowRoot.host.style.setProperty('--device-screen1-width', '720px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-width', '720px');
+        this.shadowRoot.host.style.setProperty('--device-screen1-height', '960px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-height', '960px');
+        this.shadowRoot.host.style.setProperty('--device-border', '5px');
+        this.shadowRoot.host.style.setProperty('--device-bezel-vertical', '24px');
+        this.shadowRoot.host.style.setProperty('--device-bezel-horizontal', '14px');
+        this.shadowRoot.host.style.setProperty('--device-fold-width', '24px');
+        this.shadowRoot.host.style.setProperty('--scale-factor', '0.28');
+        break;
+      case 'duo':
+        this.shadowRoot.host.style.setProperty('--device-screen1-width', '450px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-width', '450px');
+        this.shadowRoot.host.style.setProperty('--device-screen1-height', '600px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-height', '600px');
+        this.shadowRoot.host.style.setProperty('--device-border', '5px');
+        this.shadowRoot.host.style.setProperty('--device-bezel-vertical', '24px');
+        this.shadowRoot.host.style.setProperty('--device-bezel-horizontal', '14px');
+        this.shadowRoot.host.style.setProperty('--device-fold-width', '28px');
+        this.shadowRoot.host.style.setProperty('--scale-factor', '0.45');
+        break;
+      case 'asus':
+        break;
+      case 'hsb':
+        break;
+      default:
+    }
+    this._updatePreviewRotation();
   }
 
   _updateConfig() {
