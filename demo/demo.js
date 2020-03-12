@@ -332,6 +332,11 @@ export class MainApplication extends LitElement {
       display: block;
     }
 
+    mwc-circular-progress {
+      position: absolute;
+      top: 50%;
+    }
+
     /* These rules do not work with the polyfill */
     @media (spanning: single-fold-vertical) {
       .gallery {
@@ -402,6 +407,7 @@ export class MainApplication extends LitElement {
   _detail_container;
   _detail;
   _detail_select;
+  _spinner;
 
   firstUpdated() {
     this._full_img = this.shadowRoot.querySelector('#full-img');
@@ -409,6 +415,7 @@ export class MainApplication extends LitElement {
     this._detail_container = this.shadowRoot.querySelector('.detail-container');
     this._detail = this.shadowRoot.querySelector('.detail');
     this._detail_select = this.shadowRoot.querySelector('.detail-select');
+    this._spinner = this.shadowRoot.querySelector("mwc-circular-progress");
   }
 
   constructor() {
@@ -431,6 +438,10 @@ export class MainApplication extends LitElement {
     } else {
       this._full_view_container_classes = { hidden: false };
       this._full_img.setAttribute('src', path);
+      this._spinner.style.visibility = "visible";
+      this._full_img.addEventListener("load", () => {
+        this._spinner.style.visibility = "hidden";
+      }, { once: true });
       this._current_image = e.currentTarget;
     }
   }
@@ -519,6 +530,7 @@ export class MainApplication extends LitElement {
       <div class="fullview-container ${classMap(this._full_view_container_classes)}" @click="${this._closePicture}">
         <div class="close" @click="${this._closePicture}"></div>
         <div class="arrow-left" @click="${this._previousPicture}"></div>
+        <mwc-circular-progress></mwc-circular-progress>
         <img id="full-img">
         <div class="arrow-right" @click="${this._nextPicture}"></div>
       </div>
