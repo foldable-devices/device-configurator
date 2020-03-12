@@ -481,6 +481,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_container.style.display = 'flex';
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
+        this._seam_slider.layout();
         this.foldWidth = 24;
         if (this._spanning === 'none')
           this._currentOrientation = this.spanning = 'single-fold-vertical';
@@ -532,6 +533,7 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = false;
         this._device_hinge.classList.add('fold');
         this._device_hinge.classList.remove('hinge');
+        this._seam_slider.layout();
         this.foldWidth = 114;
         if (this._spanning === 'none') {
           this._currentOrientation = this.spanning = 'single-fold-horizontal';
