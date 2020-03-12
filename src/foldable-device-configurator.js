@@ -25,7 +25,14 @@ class FoldableDeviceConfigurator extends LitElement {
       --device-bezel-vertical: 19px;
       --device-bezel-horizontal: 8px;
       --device-fold-width: 28px;
-      --scale-factor: 0.45;
+      --scale-factor: 0.44;
+    }
+
+    :host(.fullscreen) {
+      height: 100vh;
+      width: 100vw;
+      top: 0px;
+      left: 0px;
     }
 
     #header {
@@ -40,12 +47,21 @@ class FoldableDeviceConfigurator extends LitElement {
       touch-action: none;
     }
 
+
+    #wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
     #content {
       display: grid;
       grid-template-columns: 100px auto;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto 1fr auto auto;
       align-items: center;
       justify-items: start;
+      height: 95%;
     }
 
     #content > * {
@@ -80,15 +96,39 @@ class FoldableDeviceConfigurator extends LitElement {
       opacity: 1;
     }
 
+    .fullscreen {
+      position: absolute;
+      right: 30px;
+      top: 5px;
+      width: 18px;
+      height: 18px;
+      opacity: 0.5;
+      cursor: initial;
+    }
+
+    .fullscreen:hover {
+      opacity: 1;
+    }
+
     #preview-container {
-      height: 300px;
-      width: 450px;
       grid-column: span 2;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      height: 100%;
+      width: calc(100% - 34px);
     }
 
     #preview {
       transform: scale(var(--scale-factor));
       transform-origin: top left;
+      position: fixed;
+    }
+
+    .preview-center {
+      transform-origin: top left;
+      transform: scale(var(--scale-factor)) translateX(-50%);
+      left: 50%;
     }
 
     #device {
@@ -179,6 +219,8 @@ class FoldableDeviceConfigurator extends LitElement {
   _device;
   _frame;
   _currentOrientation;
+  _currentDevice;
+  _isFullscreen = false;
 
   _spanning;
   _fold_width;
@@ -255,6 +297,8 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   _startDrag = async (event) => {
+    if (this._isFullscreen)
+      return;
     this._position_x = event.clientX;
     this._position_y = event.clientY;
     this._pointerId = event.pointerId;
@@ -334,73 +378,57 @@ class FoldableDeviceConfigurator extends LitElement {
     this.spanning = this._orientation_select[selectedIndex].value
     this._updateConfig();
     this._updatePreviewRotation();
+    this._calculateAndApplyScaleFactor();
+  }
+
+  _applyVerticalRotation() {
+    this._frame.style.width = 'calc(var(--device-screen1-width) + var(--device-screen2-width)  + var(--device-fold-width))';
+    this._frame.style.height = 'var(--device-screen1-height)';
+    if (this._isFullscreen) {
+      this._preview.style.left = '50%';
+      this._preview.style.transform = 'scale(var(--scale-factor)) translateX(-50%)';
+    } else {
+      this._preview.style.left = '';
+      this._preview.style.transform = 'scale(var(--scale-factor))';
+    }
+    this._frame.style.transform = '';
+    this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
+    this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
+  }
+
+  _applyHorizontalRotation() {
+    this._frame.style.transform = 'rotate(-90deg) translateX(-100%)';
+    this._frame.style.width = 'var(--device-screen1-height)';
+    this._frame.style.height = 'calc(var(--device-screen1-width) + var(--device-screen2-width) + var(--device-fold-width))';
+    if (this._isFullscreen) {
+      this._preview.style.left = '50%';
+      this._preview.style.transform = 'scale(var(--scale-factor)) rotate(90deg) translateY(-50%)';
+    } else {
+      this._preview.style.left = '';
+      this._preview.style.transform = 'scale(var(--scale-factor)) rotate(90deg) translateY(-100%)';
+    }
   }
 
   _updatePreviewRotation() {
-    const selectedIndex = this._device_type_select.selectedIndex;
-    const deviceType = this._device_type_select[selectedIndex].value;
     // We're animating only if we're rotating the device.
     if (this._spanning != this._currentOrientation) {
       this._preview.style.transition = 'transform 0.7s ease-in-out';
       // Only animate the rotation.
       this._preview.addEventListener('transitionend', this._rotationFinished);
     }
+    this._currentOrientation = this.spanning;
     switch(this.spanning) {
       case "none":
-        if (deviceType  === 'asus') {
-          this._frame.style.transform = 'rotate(-90deg) translateX(-100%)';
-          this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
-          this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
-          this._frame.style.width = 'var(--device-screen1-height)';
-          this._frame.style.height = 'calc(var(--device-screen1-width) + var(--device-screen2-width) + var(--device-fold-width))';
-          this._preview.style.marginLeft = '30px';
-          this._preview.style.transform = 'scale(var(--scale-factor)) rotate(90deg) translateY(-100%)';
-          this.shadowRoot.host.style.height = '430px';
-          this._preview_container.style.height = "300px";
+        if (this._currentDevice  === 'asus')
+          this._applyHorizontalRotation();
           break;
-        }
       case "single-fold-vertical":
-        this._preview.style.marginLeft = '';
-        this._preview.style.transform = 'scale(var(--scale-factor))';
-        this._frame.style.transform = '';
-        this._frame.style.top = 'calc(var(--device-bezel-vertical) + var(--device-border))';
-        this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
-        this._frame.style.width = 'calc(var(--device-screen1-width) + var(--device-screen2-width)  + var(--device-fold-width))';
-        this._frame.style.height = 'var(--device-screen1-height)';
-        if (deviceType === 'hsb' || deviceType === 'custom') {
-          this.shadowRoot.host.style.height = '490px';
-        } else {
-          this.shadowRoot.host.style.height = '430px';
-        }
-        this._preview_container.style.height = "300px";
+        this._applyVerticalRotation();
         break;
       case "single-fold-horizontal":
-        this._frame.style.transform = 'rotate(-90deg) translateX(-100%)';
-        this._frame.style.top = 'calc(var(--device-border) + var(--device-bezel-vertical))';
-        this._frame.style.left = 'calc(var(--device-bezel-horizontal) + var(--device-border))';
-        this._frame.style.width = 'var(--device-screen1-height)';
-        this._frame.style.height = 'calc(var(--device-screen1-width) + var(--device-screen2-width) + var(--device-fold-width))';
-        this._preview.style.marginLeft = '70px';
-        this._preview.style.transform = 'scale(var(--scale-factor)) rotate(90deg) translateY(-100%)';
-        this._preview_container.style.height = "430px";
-        switch (deviceType) {
-          case 'custom':
-            this.shadowRoot.host.style.height = '620px';
-            break;
-          case 'asus':
-            this._preview.style.marginLeft = '30px';
-            this.shadowRoot.host.style.height = '430px';
-            this._preview_container.style.height = "300px";
-            break;
-          case 'hsb':
-            this.shadowRoot.host.style.height = '630px';
-            break;
-          default:
-            this.shadowRoot.host.style.height = '560px';
-        }
+        this._applyHorizontalRotation();
         break;
     }
-    this._currentOrientation = this.spanning;
   }
 
   _rotationFinished = (event) => {
@@ -438,10 +466,10 @@ class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
         this.foldWidth = 24;
-        if (this._spanning === 'none') {
+        if (this._spanning === 'none')
           this._currentOrientation = this.spanning = 'single-fold-vertical';
-        }
-        this._updatePreviewConfiguration('duo');
+        this._currentDevice = 'custom';
+        this._updatePreviewConfiguration();
         this._updateConfig();
         break;
       case 'neo':
@@ -449,10 +477,10 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
         this.foldWidth = 24;
-        if (this._spanning === 'none') {
+        this._currentDevice = 'neo';
+        if (this._spanning === 'none')
           this._currentOrientation = this.spanning = 'single-fold-vertical';
-        }
-        this._updatePreviewConfiguration('neo');
+        this._updatePreviewConfiguration();
         this._updateConfig();
         break;
       case 'duo':
@@ -460,17 +488,18 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
         this.foldWidth = 28;
-        if (this._spanning === 'none') {
+        this._currentDevice = 'duo';
+        if (this._spanning === 'none')
           this._currentOrientation = this.spanning = 'single-fold-vertical';
-        }
-        this._updatePreviewConfiguration('duo');
+        this._updatePreviewConfiguration();
         this._updateConfig();
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
         this._handleAsusSpanning();
-        this._updatePreviewConfiguration('asus');
+        this._currentDevice = 'asus';
+        this._updatePreviewConfiguration();
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
@@ -483,7 +512,8 @@ class FoldableDeviceConfigurator extends LitElement {
         if (this._spanning === 'none') {
           this._currentOrientation = this.spanning = 'single-fold-horizontal';
         }
-        this._updatePreviewConfiguration('hsb');
+        this._currentDevice = 'hsb';
+        this._updatePreviewConfiguration();
         this._updateConfig();
           break;
       default:
@@ -491,63 +521,69 @@ class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
         this._currentOrientation = this.spanning = 'none';
+        this._currentDevice = 'duo';
         this.foldWidth = 0;
-        this._updatePreviewConfiguration('duo');
+        this._updatePreviewConfiguration();
         this._updateConfig();
     }
   }
 
-  _updatePreviewConfiguration(deviceType){
-    switch(deviceType) {
-      case 'custom':
-        break;
+  _calculateAndApplyScaleFactor() {
+    const style = window.getComputedStyle(this._preview_container);
+    const deviceStyle = window.getComputedStyle(this._device);
+    const computedWidth = parseInt(style.width, 10);
+    const computedHeight = parseInt(style.height, 10);
+    let computedDeviceWidth = parseInt(deviceStyle.width, 10);
+    let computedDeviceHeight = parseInt(deviceStyle.height, 10);
+    let scaleFactor = 1;
+    // The device is rotated, let's reverse.
+    if (this._currentOrientation == 'single-fold-horizontal') {
+      computedDeviceWidth = parseInt(deviceStyle.height, 10);
+      computedDeviceHeight = parseInt(deviceStyle.width, 10);
+    }
+    if (computedDeviceHeight > computedHeight || computedDeviceWidth > computedWidth) {
+      const scaleHeight = computedHeight / computedDeviceHeight;
+      const scaleWidth = computedWidth / computedDeviceWidth;
+      scaleFactor = scaleWidth < scaleHeight ? scaleWidth : scaleHeight;
+    }
+    this.shadowRoot.host.style.setProperty('--scale-factor', Math.trunc(scaleFactor* 100) / 100);
+  }
+
+  _updatePreviewConfiguration() {
+    switch(this._currentDevice) {
       case 'neo':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '720px');
         this.shadowRoot.host.style.setProperty('--device-screen2-width', '720px');
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '960px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '960px');
-        this.shadowRoot.host.style.setProperty('--device-border', '7px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-vertical', '24px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-horizontal', '14px');
         this.shadowRoot.host.style.setProperty('--device-fold-width', '24px');
-        this.shadowRoot.host.style.setProperty('--scale-factor', '0.28');
         break;
+      case 'custom':
       case 'duo':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '450px');
         this.shadowRoot.host.style.setProperty('--device-screen2-width', '450px');
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '600px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '600px');
-        this.shadowRoot.host.style.setProperty('--device-border', '7px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-vertical', '24px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-horizontal', '14px');
         this.shadowRoot.host.style.setProperty('--device-fold-width', '28px');
-        this.shadowRoot.host.style.setProperty('--scale-factor', '0.45');
         break;
       case 'asus':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '460px');
         this.shadowRoot.host.style.setProperty('--device-screen2-width', '715px');
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '1395px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '1395px');
-        this.shadowRoot.host.style.setProperty('--device-border', '7px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-vertical', '24px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-horizontal', '14px');
         this.shadowRoot.host.style.setProperty('--device-fold-width', '20px');
-        this.shadowRoot.host.style.setProperty('--scale-factor', '0.25');
         break;
       case 'hsb':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '1280px');
         this.shadowRoot.host.style.setProperty('--device-screen2-width', '1280px');
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '1920px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '1920px');
-        this.shadowRoot.host.style.setProperty('--device-border', '7px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-vertical', '24px');
-        this.shadowRoot.host.style.setProperty('--device-bezel-horizontal', '14px');
         this.shadowRoot.host.style.setProperty('--device-fold-width', '114px');
-        this.shadowRoot.host.style.setProperty('--scale-factor', '0.15');
         break;
       default:
     }
     this._updatePreviewRotation();
+    this._calculateAndApplyScaleFactor();
   }
 
   _updateConfig() {
@@ -570,6 +606,22 @@ class FoldableDeviceConfigurator extends LitElement {
     };
   }
 
+  _toggleFullscreen() {
+    this._isFullscreen = !this._isFullscreen;
+    if (this._isFullscreen) {
+      this.shadowRoot.host.style.top = '0px';
+      this.shadowRoot.host.style.left = '0px';
+      this.shadowRoot.host.style.right = '';
+      this.shadowRoot.host.classList.add('fullscreen');
+    } else {
+      this.shadowRoot.host.classList.remove('fullscreen');
+      this.shadowRoot.host.style.top = '16px';
+      this.shadowRoot.host.style.left = '';
+      this.shadowRoot.host.style.right = '80px';
+    }
+    this._updatePreviewConfiguration();
+  }
+
   _closeConfigurator() {
     this.shadowRoot.host.style.visibility = 'hidden';
     this._seam_slider.style.display = 'none';
@@ -582,6 +634,11 @@ class FoldableDeviceConfigurator extends LitElement {
       <div class="close" @click="${this._closeConfigurator}">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
           <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
+        </svg>
+      </div>
+      <div class="fullscreen" @click="${this._toggleFullscreen}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+        <path d="M4.5 11H3v4h4v-1.5H4.5V11zM3 7h1.5V4.5H7V3H3v4zm10.5 6.5H11V15h4v-4h-1.5v2.5zM11 3v1.5h2.5V7H15V3h-4z"/>
         </svg>
       </div>
       <div id="header">Foldable Screen</div>
