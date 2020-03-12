@@ -165,14 +165,14 @@ class FoldableDeviceConfigurator extends LitElement {
       height: 100%;
     }
 
-    .hinge {
+    .hinge-element {
       background-color: #b8b8b8;
       width: var(--device-fold-width);
       height: calc(var(--device-bezel-vertical) / 2);
       border-radius: 5px;
     }
 
-    #fold {
+    .hinge {
       width: calc(var(--device-fold-width) + 2 * var(--device-border));
       height: calc(var(--device-screen1-height) + 2 *var(--device-bezel-vertical));
       z-index: 6;
@@ -186,6 +186,18 @@ class FoldableDeviceConfigurator extends LitElement {
       align-items: center;
       box-sizing: border-box;
       border-radius: 10px;
+    }
+
+    .fold {
+      width: calc(var(--device-fold-width) + 2 * var(--device-border));
+      height: calc(var(--device-screen1-height) + 2 *var(--device-bezel-vertical));
+      opacity: 0.4;
+      z-index: 6;
+      background-color: white;
+    }
+
+    .fold > * {
+      display: none;
     }
 
     #frame {
@@ -218,6 +230,7 @@ class FoldableDeviceConfigurator extends LitElement {
   _preview_container;
   _device;
   _frame;
+  _device_hinge;
   _currentOrientation;
   _currentDevice;
   _isFullscreen = false;
@@ -268,6 +281,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this._preview_container = this.shadowRoot.querySelector("#preview-container");
     this._device = this.shadowRoot.querySelector('#device');
     this._frame = this.shadowRoot.querySelector('#frame');
+    this._device_hinge = this.shadowRoot.querySelector('#device-hinge');
     var DOMURL = self.URL || self.webkitURL || self;
     this._frame.src = window.location.href;
     this._updateConfig();
@@ -478,6 +492,8 @@ class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
+        this._device_hinge.classList.remove('fold');
+        this._device_hinge.classList.add('hinge');
         this.foldWidth = 24;
         this._currentDevice = 'neo';
         if (this._spanning === 'none')
@@ -489,6 +505,8 @@ class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
+        this._device_hinge.classList.remove('fold');
+        this._device_hinge.classList.add('hinge');
         this.foldWidth = 28;
         this._currentDevice = 'duo';
         if (this._spanning === 'none')
@@ -499,6 +517,8 @@ class FoldableDeviceConfigurator extends LitElement {
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
+        this._device_hinge.classList.remove('fold');
+        this._device_hinge.classList.add('hinge');
         this._handleAsusSpanning();
         this._currentDevice = 'asus';
         this._updatePreviewConfiguration();
@@ -510,6 +530,8 @@ class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = false;
         this._seam_container.style.display = 'flex';
         this._seam_slider.disabled = false;
+        this._device_hinge.classList.add('fold');
+        this._device_hinge.classList.remove('hinge');
         this.foldWidth = 114;
         if (this._spanning === 'none') {
           this._currentOrientation = this.spanning = 'single-fold-horizontal';
@@ -525,6 +547,8 @@ class FoldableDeviceConfigurator extends LitElement {
         this._currentOrientation = this.spanning = 'none';
         this._currentDevice = 'duo';
         this.foldWidth = 0;
+        this._device_hinge.classList.remove('fold');
+        this._device_hinge.classList.add('hinge');
         this._updatePreviewConfiguration();
         this._updateConfig();
     }
@@ -665,10 +689,10 @@ class FoldableDeviceConfigurator extends LitElement {
           <div id="preview">
             <div id="device">
               <div class="screen right"></div>
-              <div id="fold">
-                <div class="hinge"></div>
+              <div class="hinge" id="device-hinge">
+                <div class="hinge-element"></div>
                 <div class="hole"></div>
-                <div class="hinge"></div>
+                <div class="hinge-element"></div>
               </div>
               <div class="screen left"></div>
             </div>
