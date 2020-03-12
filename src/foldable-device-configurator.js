@@ -421,7 +421,9 @@ class FoldableDeviceConfigurator extends LitElement {
       case "none":
         if (this._currentDevice  === 'asus')
           this._applyHorizontalRotation();
-          break;
+        else
+          this._applyVerticalRotation();
+        break;
       case "single-fold-vertical":
         this._applyVerticalRotation();
         break;
