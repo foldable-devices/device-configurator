@@ -58,7 +58,7 @@ class FoldableDeviceConfigurator extends LitElement {
     #content {
       display: grid;
       grid-template-columns: 100px auto;
-      grid-template-rows: auto auto 1fr auto auto;
+      grid-template-rows: auto auto auto 1fr auto auto;
       align-items: center;
       justify-items: start;
       height: 95%;
@@ -109,6 +109,12 @@ class FoldableDeviceConfigurator extends LitElement {
     .fullscreen:hover {
       opacity: 1;
     }
+
+    #preview-text {
+      grid-column: span 2;
+      font-size : 1em;
+    }
+
 
     #preview-container {
       grid-column: span 2;
@@ -214,7 +220,7 @@ class FoldableDeviceConfigurator extends LitElement {
     }
 
     .legend {
-      font-size : 10px;
+      font-size : 0.8em;
       height: 20px;
       text-align: center;
       grid-column: span 2;
@@ -692,6 +698,7 @@ class FoldableDeviceConfigurator extends LitElement {
           <option value="single-fold-vertical">Vertical</option>
           <option value="single-fold-horizontal">Horizontal</option>
         </select>
+        <div id="preview-text">Below is an emulated version on the device :</div> 
         <div id="preview-container">
           <div id="preview">
             <div id="device">
