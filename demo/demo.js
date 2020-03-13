@@ -554,7 +554,22 @@ export class MainApplication extends LitElement {
       { name: "images/tents-l", alt: "Camping tents hanging on a cliff" },
       { name: "images/waterfall-l", alt: "Picture of a waterfall between big rocks" },
       { name: "images/mountain2-l", alt: "Beautiful picture of a mountain landscape" },
-      { name: "images/wave-l", alt: "This is a picture from a wave in the ocean" }
+      { name: "images/wave-l", alt: "This is a picture from a wave in the ocean" },
+      { name: "images/aerial-l", alt: "This is an aerial picture of a city" },
+      { name: "images/building-l", alt: "This is a picture from inside a building" },
+      { name: "images/catamaran-l", alt: "This is a picture of a catamaran with blue water" },
+      { name: "images/cats-l", alt: "Thisa picture of two cats sleeping" },
+      { name: "images/egypt-l", alt: "This is a picture from somewhere in Egypt" },
+      { name: "images/feather-l", alt: "This is a picture of colorful feathers" },
+      { name: "images/fruits-l", alt: "This is a picture of a water bottle and fruits" },
+      { name: "images/golden-gate-l", alt: "This is a picture of the Golden Gate" },
+      { name: "images/marocco-l", alt: "This is a picture of ancient building in Marocco" },
+      { name: "images/milky-way-l", alt: "This is a picture from the Milky Way" },
+      { name: "images/palm-tree-l", alt: "This is a picture of palm trees with beautiful weather" },
+      { name: "images/rainbow-l", alt: "This is a picture of a rainbow from a light" },
+      { name: "images/road2-l", alt: "This is a picture from a road with a lot of trees" },
+      { name: "images/surf-l", alt: "This is a picture of a surfer" },
+      { name: "images/volcano-l", alt: "This is an aerial picture of a volcano" }
     ];
 
     return html`
