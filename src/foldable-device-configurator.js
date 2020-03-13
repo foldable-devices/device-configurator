@@ -357,21 +357,22 @@ class FoldableDeviceConfigurator extends LitElement {
   // these are already rewritten by the time I hit this handler).
   // Hey it's all WIP and research, don't complain.
   _handleAsusSpanning() {
+    console.log(window.innerHeight)
     if (window.innerHeight > 752) {
       this.spanning = 'single-fold-horizontal';
-      this.foldWidth = 20;
+      this.foldWidth = 23;
       this._updateConfig();
       setTimeout( () => {
         const polyfill = document.styleSheets[document.styleSheets.length - 1];
         const rule = polyfill.rules[0].cssRules[0];
         // This is specific to the demo :(, really bad.
-        rule.style.setProperty('--span-1-height', '460px');
-        rule.style.setProperty('--span-2-height', '715px');
+        rule.style.setProperty('--span-1-height', '400px');
+        rule.style.setProperty('--span-2-height', '660px');
         const polyfillPreview = this._frame.contentDocument.styleSheets[this._frame.contentDocument.styleSheets.length - 1];
         const rulePreview = polyfillPreview.rules[0].cssRules[0];
-        rulePreview.style.setProperty('--span-1-height', '460px');
-        rulePreview.style.setProperty('--span-2-height', '715px');
-      }, 200)
+        rulePreview.style.setProperty('--span-1-height', '400px');
+        rulePreview.style.setProperty('--span-2-height', '660px');
+      }, 500)
     } else {
       this.spanning = 'none';
       this.foldWidth = 0;
@@ -603,11 +604,11 @@ class FoldableDeviceConfigurator extends LitElement {
         this.shadowRoot.host.style.setProperty('--device-fold-width', '28px');
         break;
       case 'asus':
-        this.shadowRoot.host.style.setProperty('--device-screen1-width', '460px');
-        this.shadowRoot.host.style.setProperty('--device-screen2-width', '715px');
-        this.shadowRoot.host.style.setProperty('--device-screen1-height', '1395px');
-        this.shadowRoot.host.style.setProperty('--device-screen2-height', '1395px');
-        this.shadowRoot.host.style.setProperty('--device-fold-width', '20px');
+        this.shadowRoot.host.style.setProperty('--device-screen1-width', '400px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-width', '660px');
+        this.shadowRoot.host.style.setProperty('--device-screen1-height', '1396px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-height', '1396px');
+        this.shadowRoot.host.style.setProperty('--device-fold-width', '23px');
         break;
       case 'hsb':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '1280px');
@@ -680,7 +681,7 @@ class FoldableDeviceConfigurator extends LitElement {
           <animateTransform  attributeName="transform" additive="sum" type="scale" values="1;1.1;1" dur="2s" repeatCount="10" />
         </svg>
       </div>
-      <div id="header">Foldable Screen</div>
+      <div id="header">Foldable Devices</div>
       <div id="content">
         <div class="category">Device</div>
         <select id="device-select">
