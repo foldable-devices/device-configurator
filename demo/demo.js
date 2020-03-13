@@ -1,5 +1,8 @@
-import { LitElement, html, css, customElement } from "../web_modules/lit-element.js";
+import { LitElement, html, css, customElement } from '../web_modules/lit-element.js';
 import { classMap } from '../web_modules/lit-html/directives/class-map.js';
+import '../web_modules/@material/mwc-checkbox.js';
+import '../web_modules/@material/mwc-drawer.js';
+import '../web_modules/@material/mwc-icon-button.js';
 
 class MaterialSpinner extends LitElement {
   static styles = css`
@@ -107,16 +110,16 @@ class DetailImage extends LitElement {
   _legend;
 
   firstUpdated() {
-    this._spinner = this.shadowRoot.querySelector("mwc-circular-progress");
-    this._image = this.shadowRoot.querySelector("img");
-    this._legend = this.shadowRoot.querySelector("#text");
+    this._spinner = this.shadowRoot.querySelector('mwc-circular-progress');
+    this._image = this.shadowRoot.querySelector('img');
+    this._legend = this.shadowRoot.querySelector('#text');
   }
 
   updated(changedProperties) {
     if (changedProperties.has("src")) {
-      this._spinner.style.visibility = "visible";
-      this._image.addEventListener("load", () => {
-        this._spinner.style.visibility = "hidden";
+      this._spinner.style.visibility = 'visible';
+      this._image.addEventListener('load', () => {
+        this._spinner.style.visibility = 'hidden';
         this.style.visibility = 'visible';
         this._legend.innerText = this.description;
       }, { once: true });
@@ -134,15 +137,13 @@ class DetailImage extends LitElement {
     `;
   }
 }
-customElements.define("detail-img", DetailImage);
+customElements.define('detail-img', DetailImage);
 
 export class MainApplication extends LitElement {
   static styles = css`
     :host {
       width: 100vw;
       height: 100vh;
-      display: flex;
-      flex-direction: var(--flex-layout);
     }
 
     *,
@@ -165,6 +166,11 @@ export class MainApplication extends LitElement {
       flex-direction: row;
       justify-content: center;
       align-items: center;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: var(--flex-layout);
     }
 
     .fullview-container.hidden {
@@ -337,6 +343,25 @@ export class MainApplication extends LitElement {
       top: 50%;
     }
 
+    mwc-checkbox {
+      --mdc-theme-secondary: black;
+    }
+
+    .menu-icon {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      color: white;
+    }
+
+    .drawer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      margin-left: 12px;
+    }
+
     /* These rules do not work with the polyfill */
     @media (spanning: single-fold-vertical) {
       .gallery {
@@ -407,7 +432,9 @@ export class MainApplication extends LitElement {
   _detail_container;
   _detail;
   _detail_select;
+  _drawer;
   _spinner;
+  _styleCheckbox;
 
   firstUpdated() {
     this._full_img = this.shadowRoot.querySelector('#full-img');
@@ -415,12 +442,36 @@ export class MainApplication extends LitElement {
     this._detail_container = this.shadowRoot.querySelector('.detail-container');
     this._detail = this.shadowRoot.querySelector('.detail');
     this._detail_select = this.shadowRoot.querySelector('.detail-select');
-    this._spinner = this.shadowRoot.querySelector("mwc-circular-progress");
+    this._spinner = this.shadowRoot.querySelector('mwc-circular-progress');
+    this._drawer = this.shadowRoot.querySelector('#drawer');
+    this._styleCheckbox = this.shadowRoot.querySelector('mwc-checkbox');
+    this._styleCheckbox.addEventListener('change', this._styleChanged);
   }
 
   constructor() {
     super();
     this._full_view_container_classes = { hidden: true };
+  }
+
+  _openDrawer() {
+    this._drawer.open = true;
+  }
+
+  _styleChanged = (event) => {
+    if (this._styleCheckbox.checked) {
+      let fullview = this.shadowRoot.querySelector('.fullview-container');
+      fullview.style.height = '100vh';
+    } else {
+      let height = window.getComputedStyle(this.shadowRoot.host).getPropertyValue('--span-1-height');
+      let fullview = this.shadowRoot.querySelector('.fullview-container');
+      fullview.style.height = height;
+      this.shadowRoot.host.style.setProperty('--span-1-width', '100vw');
+      this.shadowRoot.host.style.setProperty('--span-1-height', '100vh');
+      this.shadowRoot.host.style.setProperty('--fold-width', '0');
+      this.shadowRoot.host.style.setProperty('--fold-height', '0');
+      this.shadowRoot.host.style.setProperty('--span-2-width', '0vw');
+      this.shadowRoot.host.style.setProperty('--span-2-height', '0vh');
+    }
   }
 
   _openPicture(e) {
@@ -438,9 +489,9 @@ export class MainApplication extends LitElement {
     } else {
       this._full_view_container_classes = { hidden: false };
       this._full_img.setAttribute('src', path);
-      this._spinner.style.visibility = "visible";
-      this._full_img.addEventListener("load", () => {
-        this._spinner.style.visibility = "hidden";
+      this._spinner.style.visibility = 'visible';
+      this._full_img.addEventListener('load', () => {
+        this._spinner.style.visibility = 'hidden';
       }, { once: true });
       this._current_image = e.currentTarget;
     }
@@ -507,33 +558,42 @@ export class MainApplication extends LitElement {
     ];
 
     return html`
-      <div class="gallery">
-        ${images.map(images => html`
-          <figure class="gallery-item">
-            <picture @click="${this._openPicture}">
-              <source srcset="${images.name}.webp" type="image/webp">
-              <img data-src="${images.name}.jpg" class="gallery-img" alt=${images.alt}>
-            </picture>
-          </figure>
-        `)}
-      </div>
-
-      <div class="fold angled stripes"></div>
-
-      <div class="detail-container">
-        <div class="detail-select">Select an image in the gallery.</div>
-        <div class="detail">
-          <detail-img></detail-img>
+      <mwc-drawer type="modal" hasHeader id="drawer">
+        <span slot="title">Configuration</span>
+        <div class="drawer">
+            Split UX : <mwc-checkbox checked></mwc-checkbox>
         </div>
-      </div>
+        <div slot="appContent" class="content">
+          <mwc-icon-button icon="menu" class="menu-icon" @click="${this._openDrawer}"></mwc-icon-button>
+          <div class="gallery">
+            ${images.map(images => html`
+              <figure class="gallery-item">
+                <picture @click="${this._openPicture}">
+                  <source srcset="${images.name}.webp" type="image/webp">
+                  <img data-src="${images.name}.jpg" class="gallery-img" alt=${images.alt}>
+                </picture>
+              </figure>
+            `)}
+          </div>
 
-      <div class="fullview-container ${classMap(this._full_view_container_classes)}" @click="${this._closePicture}">
-        <div class="close" @click="${this._closePicture}"></div>
-        <div class="arrow-left" @click="${this._previousPicture}"></div>
-        <mwc-circular-progress></mwc-circular-progress>
-        <img id="full-img">
-        <div class="arrow-right" @click="${this._nextPicture}"></div>
-      </div>
+          <div class="fold angled stripes"></div>
+
+          <div class="detail-container">
+            <div class="detail-select">Select an image in the gallery.</div>
+            <div class="detail">
+              <detail-img></detail-img>
+            </div>
+          </div>
+
+          <div class="fullview-container ${classMap(this._full_view_container_classes)}" @click="${this._closePicture}">
+            <div class="close" @click="${this._closePicture}"></div>
+            <div class="arrow-left" @click="${this._previousPicture}"></div>
+            <mwc-circular-progress></mwc-circular-progress>
+            <img id="full-img">
+            <div class="arrow-right" @click="${this._nextPicture}"></div>
+          </div>
+        </div>
+      </mwc-drawer>
     `;
   }
 }

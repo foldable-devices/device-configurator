@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "../web_modules/lit-element.js";
+import { LitElement, html, css } from '../web_modules/lit-element.js';
 import '../web_modules/@material/mwc-slider.js';
 
 class FoldableDeviceConfigurator extends LitElement {
@@ -257,13 +257,13 @@ class FoldableDeviceConfigurator extends LitElement {
     if (this._inIframe()) {
       this.shadowRoot.host.style.display = 'none';
     }
-    this._foldable_config = window["__foldables_env_vars__"];
+    this._foldable_config = window['__foldables_env_vars__'];
 
     this._header = this.shadowRoot.querySelector('#header');
     this._device_type_select = this.shadowRoot.querySelector('#device-select');
     this._orientation_select = this.shadowRoot.querySelector('#orientation-select');
-    this._seam_slider = this.shadowRoot.getElementById("seam");
-    this._seam_container = this.shadowRoot.getElementById("seam-container");
+    this._seam_slider = this.shadowRoot.getElementById('seam');
+    this._seam_container = this.shadowRoot.getElementById('seam-container');
 
     this._header.onpointerdown = this._startDrag.bind(this);
     this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
@@ -278,7 +278,7 @@ class FoldableDeviceConfigurator extends LitElement {
     this.foldWidth = 0;
 
     this._preview = this.shadowRoot.querySelector('#preview');
-    this._preview_container = this.shadowRoot.querySelector("#preview-container");
+    this._preview_container = this.shadowRoot.querySelector('#preview-container');
     this._device = this.shadowRoot.querySelector('#device');
     this._frame = this.shadowRoot.querySelector('#frame');
     this._device_hinge = this.shadowRoot.querySelector('#device-hinge');
@@ -299,7 +299,7 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 
   _updatePreview = () => {
-    this._previewConfig = this._frame.contentWindow["__foldables_env_vars__"]
+    this._previewConfig = this._frame.contentWindow['__foldables_env_vars__']
     if (!this._previewConfig)
       return;
     const config = {
@@ -328,8 +328,8 @@ class FoldableDeviceConfigurator extends LitElement {
     const y = this._position_y - event.clientY;
     this._position_x = event.clientX;
     this._position_y = event.clientY;
-    this.shadowRoot.host.style.top = (this.shadowRoot.host.offsetTop - y) + "px";
-    this.shadowRoot.host.style.left = (this.shadowRoot.host.offsetLeft - x) + "px";
+    this.shadowRoot.host.style.top = (this.shadowRoot.host.offsetTop - y) + 'px';
+    this.shadowRoot.host.style.left = (this.shadowRoot.host.offsetLeft - x) + 'px';
     event.preventDefault();
   }
 
@@ -357,12 +357,12 @@ class FoldableDeviceConfigurator extends LitElement {
         const polyfill = document.styleSheets[document.styleSheets.length - 1];
         const rule = polyfill.rules[0].cssRules[0];
         // This is specific to the demo :(, really bad.
-        rule.style.setProperty('--span-1-height', "460px");
-        rule.style.setProperty('--span-2-height', "715px");
+        rule.style.setProperty('--span-1-height', '460px');
+        rule.style.setProperty('--span-2-height', '715px');
         const polyfillPreview = this._frame.contentDocument.styleSheets[this._frame.contentDocument.styleSheets.length - 1];
         const rulePreview = polyfillPreview.rules[0].cssRules[0];
-        rulePreview.style.setProperty('--span-1-height', "460px");
-        rulePreview.style.setProperty('--span-2-height', "715px");
+        rulePreview.style.setProperty('--span-1-height', '460px');
+        rulePreview.style.setProperty('--span-2-height', '715px');
       }, 200)
     } else {
       this.spanning = 'none';
@@ -432,16 +432,16 @@ class FoldableDeviceConfigurator extends LitElement {
     }
     this._currentOrientation = this.spanning;
     switch(this.spanning) {
-      case "none":
+      case 'none':
         if (this._currentDevice  === 'asus')
           this._applyHorizontalRotation();
         else
           this._applyVerticalRotation();
         break;
-      case "single-fold-vertical":
+      case 'single-fold-vertical':
         this._applyVerticalRotation();
         break;
-      case "single-fold-horizontal":
+      case 'single-fold-horizontal':
         this._applyHorizontalRotation();
         break;
     }
@@ -457,15 +457,15 @@ class FoldableDeviceConfigurator extends LitElement {
 
   set spanning(value) {
     switch(value) {
-      case "none":
-      case "single-fold-vertical":
+      case 'none':
+      case 'single-fold-vertical':
         this._orientation_select.selectedIndex = 0;
         break;
-      case "single-fold-horizontal":
+      case 'single-fold-horizontal':
         this._orientation_select.selectedIndex = 1;
         break;
       default:
-        value = "none";
+        value = 'none';
         this._orientation_select.selectedIndex = 0;
     }
     this._spanning = value;
@@ -714,4 +714,4 @@ class FoldableDeviceConfigurator extends LitElement {
   }
 }
 
-customElements.define("foldable-device-configurator", FoldableDeviceConfigurator);
+customElements.define('foldable-device-configurator', FoldableDeviceConfigurator);

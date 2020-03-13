@@ -9,7 +9,9 @@
       "lit-html",
       "lit-html/directives/class-map.js",
       "@material/mwc-slider",
-      "@material/mwc-checkbox"
+      "@material/mwc-checkbox",
+      "@material/mwc-drawer",
+      "@material/mwc-icon-button"
     ],
     "dedupe": [
       "lit-element",
@@ -23,6 +25,8 @@
   "dependencies": {
     "@material/mwc-slider": "^0.13.0",
     "@material/mwc-checkbox": "^0.13.0",
+    "@material/mwc-drawer": "^0.13.0",
+    "@material/mwc-icon-button": "^0.13.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2"
   },
