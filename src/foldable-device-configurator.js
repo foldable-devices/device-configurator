@@ -288,6 +288,8 @@ class FoldableDeviceConfigurator extends LitElement {
     this._currentOrientation = 'none';
 
     document.addEventListener('keyup', this._handleKeyUp, false);
+
+    console.log('Device Pixel Ratio : ' + window.devicePixelRatio);
   }
 
   _handleKeyUp = (event) => {
