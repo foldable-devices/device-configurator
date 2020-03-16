@@ -699,7 +699,7 @@ class FoldableDeviceConfigurator extends LitElement {
           <option value="single-fold-vertical">Vertical</option>
           <option value="single-fold-horizontal">Horizontal</option>
         </select>
-        <div id="preview-text">Below is an emulated version on the device :</div> 
+        <div id="preview-text">Below is an emulated version on the device when spanning :</div>
         <div id="preview-container">
           <div id="preview">
             <div id="device">
