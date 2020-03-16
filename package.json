@@ -1,8 +1,9 @@
 {
   "name": "foldable-device-configurator",
   "version": "1.0.0",
-  "description": "A simple web component which you can add to emulate various type of foldables devices.",
-  "main": "src/index.js",
+  "description": "A simple web component which you can add to emulate various type of foldables devices. It will set the appropriate media queries according to the device and the setup.",
+  "main": "src/foldable-device-configurator.js",
+  "module": "src/foldable-device-configurator.js",
   "snowpack": {
     "webDependencies": [
       "lit-element",
@@ -20,13 +21,25 @@
   },
   "scripts": {
     "start": "es-dev-server --node-resolve --watch --open demo/index.html --port 8081",
-    "build": "rimraf web_modules && snowpack --optimize"
+    "build": "rimraf web_modules && snowpack --optimize",
+    "regen-package-lock": "rimraf node_modules && rimraf package-lock.json; npm install"
   },
+  "files": [
+    "!/demo/",
+    "spanning-css-polyfill/spanning-css-polyfill.js",
+    "spanning-css-polyfill/spanning-css-polyfill.js.map",
+    "web_modules/@material/mwc-slider.js",
+    "web_modules/@material/mwc-slider.js.map",
+    "web_modules/common",
+    "web_modules/lit-html",
+    "web_modules/lit-html.js",
+    "web_modules/lit-html.js.map",
+    "web_modules/import-map.json",
+    "web_modules/lit-element.js",
+    "web_modules/lit-element.js.map"
+  ],
   "dependencies": {
     "@material/mwc-slider": "^0.13.0",
-    "@material/mwc-checkbox": "^0.13.0",
-    "@material/mwc-drawer": "^0.13.0",
-    "@material/mwc-icon-button": "^0.13.0",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2"
   },
@@ -34,11 +47,15 @@
     "es-dev-server": "^1.44.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-replace": "^2.3.1",
+    "@material/mwc-drawer": "^0.13.0",
+    "@material/mwc-icon-button": "^0.13.0",
+    "@material/mwc-checkbox": "^0.13.0",
     "rollup": "^2.0.5",
     "snowpack": "^1.6.0",
     "rimraf": "^3.0.2"
   },
   "keywords": [],
+  "type": "module",
   "license": "BSD-3-Clause",
   "author": {
     "name": "Alexis Menard",

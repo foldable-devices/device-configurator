@@ -1,7 +1,7 @@
 import { LitElement, html, css } from '../web_modules/lit-element.js';
 import '../web_modules/@material/mwc-slider.js';
 
-class FoldableDeviceConfigurator extends LitElement {
+export class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
     :host {
       z-index: 9999;
