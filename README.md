@@ -32,17 +32,9 @@ Both are proposals from Microsoft. At this time the configurator will only set t
 
 ## Demo
 
-Go to https://foldable-devices.github.io/device-configurator/demo/ ([source](https://foldable-devices.github.io/device-configurator/demo/))
+- Go [here](https://foldable-devices.github.io/device-configurator/demo/)
 
-### An example in action :
-
-Foldable Device Configurator :
-
-<img src="https://raw.githubusercontent.com/foldable-devices/device-configurator/master/images/foldable-device-configurator.gif" alt="Demo of the configurator" style="width:400px;"/>
-
-On an actual device (Asus ZenBook Pro Duo) :
-
-<img src="https://raw.githubusercontent.com/foldable-devices/device-configurator/master/images/zenbook.gif" alt="Demo of the ZenBook" style="width:400px;"/>
+- You can also try a more advanced demo [here](https://foldable-devices.github.io/demos/photo-gallery/)
 
 ## Working on the foldable configurator component
 
@@ -74,7 +66,9 @@ To build, run
 $ npm run build
 ```
 
+The build is then ready to publish to npm.
+
 This demo is being developed by :
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Intel-logo.svg/200px-Intel-logo.svg.png" alt="Intel" style="width:45px;"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Intel-logo.svg/200px-Intel-logo.svg.png" alt="Intel" style="width:35px;"/>
 

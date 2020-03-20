@@ -1,7 +1,7 @@
 {
-  "name": "Foldable Gallery Demo",
-  "short_name": "Foldable Gallery",
-  "theme_color": "#da532c",
+  "name": "Configurator Demo",
+  "short_name": "Configurator Demo",
+  "theme_color": "#d18c0d",
   "background_color": "#000000",
   "display": "standalone",
   "orientation": "any",
