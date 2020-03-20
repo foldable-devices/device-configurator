@@ -362,18 +362,18 @@ export class FoldableDeviceConfigurator extends LitElement {
     console.log(window.innerHeight)
     if (window.innerHeight > 752) {
       this.spanning = 'single-fold-horizontal';
-      this.foldWidth = 23;
+      this.foldWidth = 30;
       this._updateConfig();
       setTimeout( () => {
         const polyfill = document.styleSheets[document.styleSheets.length - 1];
         const rule = polyfill.rules[0].cssRules[0];
         // This is specific to the demo :(, really bad.
-        rule.style.setProperty('--span-1-height', '400px');
-        rule.style.setProperty('--span-2-height', '660px');
+        rule.style.setProperty('--span-1-height', '440px');
+        rule.style.setProperty('--span-2-height', '720px');
         const polyfillPreview = this._frame.contentDocument.styleSheets[this._frame.contentDocument.styleSheets.length - 1];
         const rulePreview = polyfillPreview.rules[0].cssRules[0];
-        rulePreview.style.setProperty('--span-1-height', '400px');
-        rulePreview.style.setProperty('--span-2-height', '660px');
+        rulePreview.style.setProperty('--span-1-height', '440px');
+        rulePreview.style.setProperty('--span-2-height', '720px');
       }, 500)
     } else {
       this.spanning = 'none';
@@ -606,11 +606,11 @@ export class FoldableDeviceConfigurator extends LitElement {
         this.shadowRoot.host.style.setProperty('--device-fold-width', '28px');
         break;
       case 'asus':
-        this.shadowRoot.host.style.setProperty('--device-screen1-width', '400px');
-        this.shadowRoot.host.style.setProperty('--device-screen2-width', '660px');
+        this.shadowRoot.host.style.setProperty('--device-screen1-width', '440px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-width', '720px');
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '1396px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '1396px');
-        this.shadowRoot.host.style.setProperty('--device-fold-width', '23px');
+        this.shadowRoot.host.style.setProperty('--device-fold-width', '30px');
         break;
       case 'hsb':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '1280px');
