@@ -1,7 +1,7 @@
 # Foldable Device Configurator
 
 Foldable Device Configurator is a little Web Component which you can drop in your application to test
-the CSS Spanning Polyfill located [here](https://github.com/zouhir/spanning-css-polyfill)
+the CSS Spanning Polyfill located [here](https://github.com/foldable-devices/spanning-css-polyfill)
 
 ## How to use  the foldable configurator in your project?
 
@@ -23,8 +23,8 @@ When imported, in your HTML file just add the following lines:
 ## Adapting your web application to foldable/dual screen devices
 
 This web component will let you emulate various foldable configurations and will set the foldable polyfills accordingly. Currently there are two polyfills you can use to design or adapt web contents for foldable devices :
-- A JavaScript API called Window Segments located [here](https://github.com/zouhir/windowsegments-polyfill)
-- CSS Properties called Spanning located [here](https://github.com/zouhir/spanning-css-polyfill)
+- A JavaScript API called Window Segments located [here](https://github.com/foldable-devices/windowsegments-polyfill)
+- CSS Properties called Spanning located [here](https://github.com/foldable-devices/spanning-css-polyfill)
 
 Both are proposals from Microsoft. At this time the configurator will only set the spanning media-queries.
 
@@ -32,17 +32,17 @@ Both are proposals from Microsoft. At this time the configurator will only set t
 
 ## Demo
 
-Go to https://darktears.github.io/foldable-device-configurator/demo/index.html ([source](https://github.com/darktears/foldable-device-configurator/tree/master/demo))
+Go to https://foldable-devices.github.io/device-configurator/demo/ ([source](https://foldable-devices.github.io/device-configurator/demo/))
 
 ### An example in action :
 
 Foldable Device Configurator :
 
-<img src="https://raw.githubusercontent.com/darktears/foldable-device-configurator/master/images/foldable-device-configurator.gif" alt="Demo of the configurator" style="width:400px;"/>
+<img src="https://raw.githubusercontent.com/foldable-devices/device-configurator/master/images/foldable-device-configurator.gif" alt="Demo of the configurator" style="width:400px;"/>
 
 On an actual device (Asus ZenBook Pro Duo) :
 
-<img src="https://raw.githubusercontent.com/darktears/foldable-device-configurator/master/images/zenbook.gif" alt="Demo of the ZenBook" style="width:400px;"/>
+<img src="https://raw.githubusercontent.com/foldable-devices/device-configurator/master/images/zenbook.gif" alt="Demo of the ZenBook" style="width:400px;"/>
 
 ## Working on the foldable configurator component
 
