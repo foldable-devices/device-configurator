@@ -264,6 +264,8 @@ export class FoldableDeviceConfigurator extends LitElement {
       this.shadowRoot.host.style.display = 'none';
     }
     this._foldable_config = window['__foldables_env_vars__'];
+    if (!this._foldable_config)
+      console.error('foldable device polyfill was not found, make sure to include it in your project.')
 
     this._header = this.shadowRoot.querySelector('#header');
     this._device_type_select = this.shadowRoot.querySelector('#device-select');
@@ -630,7 +632,8 @@ export class FoldableDeviceConfigurator extends LitElement {
       browserShellSize: this._browser_shell_size
     }
     console.table(config);
-    this._foldable_config.update(config);
+    if (this._foldable_config)
+      this._foldable_config.update(config);
     this._seam_slider.value = this.foldWidth;
     this._updatePreview();
   }

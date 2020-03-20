@@ -1,9 +1,9 @@
 {
   "name": "foldable-device-configurator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple web component which you can add to emulate various type of foldables devices. It will set the appropriate media queries according to the device and the setup.",
-  "main": "src/foldable-device-configurator.js",
-  "module": "src/foldable-device-configurator.js",
+  "main": "build/foldable-device-configurator.js",
+  "module": "build/foldable-device-configurator.js",
   "snowpack": {
     "webDependencies": [
       "lit-element",
@@ -21,22 +21,12 @@
   },
   "scripts": {
     "start": "es-dev-server --node-resolve --watch --open demo/index.html --port 8081",
-    "build": "rimraf web_modules && snowpack --optimize",
+    "build": "rimraf dist && rollup -c rollup.config.js && rimraf web_modules && snowpack --optimize",
     "regen-package-lock": "rimraf node_modules && rimraf package-lock.json; npm install"
   },
   "files": [
     "!/demo/",
-    "spanning-css-polyfill/spanning-css-polyfill.js",
-    "spanning-css-polyfill/spanning-css-polyfill.js.map",
-    "web_modules/@material/mwc-slider.js",
-    "web_modules/@material/mwc-slider.js.map",
-    "web_modules/common",
-    "web_modules/lit-html",
-    "web_modules/lit-html.js",
-    "web_modules/lit-html.js.map",
-    "web_modules/import-map.json",
-    "web_modules/lit-element.js",
-    "web_modules/lit-element.js.map"
+    "!/src/"
   ],
   "dependencies": {
     "@material/mwc-slider": "^0.13.0",
@@ -45,12 +35,15 @@
   },
   "devDependencies": {
     "es-dev-server": "^1.44.0",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "rollup-plugin-babel": "^4.4.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-replace": "^2.3.1",
     "@material/mwc-drawer": "^0.13.0",
     "@material/mwc-icon-button": "^0.13.0",
     "@material/mwc-checkbox": "^0.13.0",
-    "rollup": "^2.0.5",
+    "rollup": "^1.32.1",
     "snowpack": "^1.6.0",
     "rimraf": "^3.0.2"
   },
