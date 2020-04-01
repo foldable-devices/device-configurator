@@ -1,5 +1,6 @@
 import { LitElement, html, css } from '../web_modules/lit-element.js';
 import '../web_modules/@material/mwc-slider.js';
+import { update } from "../web_modules/spanning-css-polyfill.js";
 
 export class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
@@ -234,6 +235,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   _seam_container;
   _preview;
   _preview_container;
+  _previewConfig;
   _device;
   _frame;
   _device_hinge;
@@ -244,7 +246,6 @@ export class FoldableDeviceConfigurator extends LitElement {
   _spanning;
   _fold_width;
   _browser_shell_size;
-  _foldable_config;
 
   _position_x;
   _position_y;
@@ -263,9 +264,6 @@ export class FoldableDeviceConfigurator extends LitElement {
     if (this._inIframe()) {
       this.shadowRoot.host.style.display = 'none';
     }
-    this._foldable_config = window['__foldables_env_vars__'];
-    if (!this._foldable_config)
-      console.error('foldable device polyfill was not found, make sure to include it in your project.')
 
     this._header = this.shadowRoot.querySelector('#header');
     this._device_type_select = this.shadowRoot.querySelector('#device-select');
@@ -309,9 +307,11 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   _updatePreview = () => {
-    this._previewConfig = this._frame.contentWindow['__foldables_env_vars__']
-    if (!this._previewConfig)
+    this._previewConfig = this._frame.contentWindow['__foldables_env_vars__'];
+    if (!this._previewConfig) {
+      console.error('foldable device polyfill was not found, make sure to include it in your project.')
       return;
+    }
     const config = {
       spanning: this.spanning,
       foldSize: this.foldWidth,
@@ -365,16 +365,19 @@ export class FoldableDeviceConfigurator extends LitElement {
       this.foldWidth = 30;
       this._updateConfig();
       setTimeout( () => {
-        const polyfill = document.styleSheets[document.styleSheets.length - 1];
-        const rule = polyfill.rules[0].cssRules[0];
-        // This is specific to the demo :(, really bad.
-        rule.style.setProperty('--span-1-height', '440px');
-        rule.style.setProperty('--span-2-height', '720px');
-        const polyfillPreview = this._frame.contentDocument.styleSheets[this._frame.contentDocument.styleSheets.length - 1];
-        const rulePreview = polyfillPreview.rules[0].cssRules[0];
-        rulePreview.style.setProperty('--span-1-height', '440px');
-        rulePreview.style.setProperty('--span-2-height', '720px');
-      }, 500)
+        for (const sheet of document.styleSheets) {
+          if (sheet.ownerNode.className === '__foldables_env_vars__') {
+            this._addZenbookVariables(sheet);
+            break;
+          }
+        }
+        for (const sheet of this._frame.contentDocument.styleSheets) {
+          if (sheet.ownerNode.className === '__foldables_env_vars__') {
+            this._addZenbookVariables(sheet);
+            break;
+          }
+        }
+      }, 200)
     } else {
       this.spanning = 'none';
       this.foldWidth = 0;
@@ -382,6 +385,10 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
 
     this._currentOrientation = this.spanning;
+  }
+
+  _addZenbookVariables(sheet) {
+    sheet.insertRule('body {--zenbook-span1-height: 440px; --zenbook-span2-height: 720px;}', sheet.cssRules.length);
   }
 
   _seamValueUpdated = async (event) => {
@@ -401,8 +408,8 @@ export class FoldableDeviceConfigurator extends LitElement {
   _orientationChanged(event) {
     const selectedIndex = this._orientation_select.selectedIndex;
     this.spanning = this._orientation_select[selectedIndex].value
-    this._updateConfig();
     this._updatePreviewRotation();
+    this._updateConfig();
     this._calculateAndApplyScaleFactor();
   }
 
@@ -632,8 +639,7 @@ export class FoldableDeviceConfigurator extends LitElement {
       browserShellSize: this._browser_shell_size
     }
     console.table(config);
-    if (this._foldable_config)
-      this._foldable_config.update(config);
+    update(config);
     this._seam_slider.value = this.foldWidth;
     this._updatePreview();
   }

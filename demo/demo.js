@@ -1,6 +1,14 @@
-import { LitElement, html, css, customElement } from '../web_modules/lit-element.js';
+import { LitElement, html, css as litCSS, customElement } from '../web_modules/lit-element.js';
 import { classMap } from '../web_modules/lit-html/directives/class-map.js';
+import { adjustCSS, observe } from "../web_modules/spanning-css-polyfill.js";
+
+const css = (strings, ...values) => {
+  const string = adjustCSS("main-application", strings[0]);
+  return litCSS([string], ...values);
+};
+
 export class MainApplication extends LitElement {
+
   static styles = css`
     :host {
       width: 100vw;
@@ -17,12 +25,12 @@ export class MainApplication extends LitElement {
 
     .content {
       display: flex;
-      flex-direction: var(--flex-layout);
+      flex-direction: row;
     }
 
     .main-container {
-      width: var(--span-1-width, 100vw);
-      height: var(--span-1-height, 100vh);
+      width: 100vw;
+      height: 100vh;
       background-color: #bf0033;
       text-align: center;
     }
@@ -34,8 +42,8 @@ export class MainApplication extends LitElement {
     }
 
     .second-container {
-      height: var(--span-2-height, 0vh);
-      width: var(--span-2-width, 0vw);
+      height: 0vh;
+      width: 0vw;
       background-color: #126b00;
       text-align: center;
     }
@@ -55,11 +63,9 @@ export class MainApplication extends LitElement {
     }
 
     .fold {
-      height: var(--fold-height, 0);
-      width: var(--fold-width, 0);
+      height: 0;
+      width: 0;
     }
-
-    /* These rules do not work with the polyfill */
     @media (spanning: single-fold-vertical) {
       .main-container {
         width: env(fold-left);
@@ -69,7 +75,7 @@ export class MainApplication extends LitElement {
         height: env(fold-height);
         width: env(fold-width);
       }
-      :host {
+      .content {
         flex-direction: row;
       }
       .second-container {
@@ -81,17 +87,17 @@ export class MainApplication extends LitElement {
     @media (spanning: single-fold-horizontal) {
       .main-container {
         width: 100vw;
-        height: calc(100vh - env(fold-top) - env(fold-height));
+        height: var(--zenbook-span1-height, calc(100vh - env(fold-top) - env(fold-height)));
       }
       .fold {
         height: env(fold-height);
         width: env(fold-width);
       }
-      :host {
+      .content {
         flex-direction: column-reverse;
       }
       .second-container {
-        height: env(fold-top);
+        height: var(--zenbook-span2-height, env(fold-top));
         width: 100vw;
       }
     }
@@ -105,7 +111,7 @@ export class MainApplication extends LitElement {
         height: 0;
         width: 0;
       }
-      :host {
+      .content {
         flex-direction: row;
       }
       .second-container {
@@ -115,7 +121,10 @@ export class MainApplication extends LitElement {
     }
   `;
 
-  firstUpdated() {}
+  connectedCallback() {
+    super.connectedCallback();
+    observe(this);
+  }
 
   constructor() {
     super();
