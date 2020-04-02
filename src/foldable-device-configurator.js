@@ -242,6 +242,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   _currentOrientation;
   _currentDevice;
   _isFullscreen = false;
+  _frameHasLoaded = false;
 
   _spanning;
   _fold_width;
@@ -263,6 +264,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   firstUpdated() {
     if (this._inIframe()) {
       this.shadowRoot.host.style.display = 'none';
+      return;
     }
 
     this._header = this.shadowRoot.querySelector('#header');
@@ -288,14 +290,17 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._device = this.shadowRoot.querySelector('#device');
     this._frame = this.shadowRoot.querySelector('#frame');
     this._device_hinge = this.shadowRoot.querySelector('#device-hinge');
-    var DOMURL = self.URL || self.webkitURL || self;
     this._frame.src = window.location.href;
     this._updateConfig();
     this._currentOrientation = 'none';
-
     document.addEventListener('keyup', this._handleKeyUp, false);
+    this._frame.onLoad = this._frameLoaded();
 
     console.log('Device Pixel Ratio : ' + window.devicePixelRatio);
+  }
+
+  _frameLoaded = () => {
+    this._frameHasLoaded = true;
   }
 
   _handleKeyUp = (event) => {
@@ -641,7 +646,8 @@ export class FoldableDeviceConfigurator extends LitElement {
     console.table(config);
     update(config);
     this._seam_slider.value = this.foldWidth;
-    this._updatePreview();
+    if (this._frameHasLoaded)
+      this._updatePreview();
   }
 
   _debounce(fn, wait) {

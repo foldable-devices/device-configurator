@@ -1,9 +1,8 @@
 import { LitElement, html, css as litCSS, customElement } from '../web_modules/lit-element.js';
-import { classMap } from '../web_modules/lit-html/directives/class-map.js';
 import { adjustCSS, observe } from "../web_modules/spanning-css-polyfill.js";
 
 const css = (strings, ...values) => {
-  const string = adjustCSS("main-application", strings[0]);
+  const string = adjustCSS(strings[0], "main-application");
   return litCSS([string], ...values);
 };
 
