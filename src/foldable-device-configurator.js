@@ -267,6 +267,16 @@ export class FoldableDeviceConfigurator extends LitElement {
       return;
     }
 
+    const hasBrowserSupport =
+      window.matchMedia('(spanning: single-fold-horizontal)').matches ||
+      window.matchMedia('(spanning: single-fold-vertical)').matches ||
+      window.matchMedia('(spanning: none)').matches || false;
+    if (hasBrowserSupport) {
+      console.info(`CSS Spanning Media Queries are supported, the configurator will hide itself.`);
+      this.shadowRoot.host.style.display = 'none';
+      return;
+    }
+
     this._header = this.shadowRoot.querySelector('#header');
     this._device_type_select = this.shadowRoot.querySelector('#device-select');
     this._orientation_select = this.shadowRoot.querySelector('#orientation-select');
