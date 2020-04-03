@@ -1,6 +1,6 @@
 import { LitElement, html, css } from '../web_modules/lit-element.js';
 import '../web_modules/@material/mwc-slider.js';
-import { update } from "../web_modules/spanning-css-polyfill.js";
+import { FoldablesFeature } from "../web_modules/spanning-css-polyfill.js";
 
 export class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
@@ -235,14 +235,12 @@ export class FoldableDeviceConfigurator extends LitElement {
   _seam_container;
   _preview;
   _preview_container;
-  _previewConfig;
   _device;
   _frame;
   _device_hinge;
   _currentOrientation;
   _currentDevice;
   _isFullscreen = false;
-  _frameHasLoaded = false;
 
   _spanning;
   _fold_width;
@@ -301,16 +299,10 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._frame = this.shadowRoot.querySelector('#frame');
     this._device_hinge = this.shadowRoot.querySelector('#device-hinge');
     this._frame.src = window.location.href;
-    this._updateConfig();
+    this._updateFoldablesFeature();
     this._currentOrientation = 'none';
     document.addEventListener('keyup', this._handleKeyUp, false);
-    this._frame.onLoad = this._frameLoaded();
-
     console.log('Device Pixel Ratio : ' + window.devicePixelRatio);
-  }
-
-  _frameLoaded = () => {
-    this._frameHasLoaded = true;
   }
 
   _handleKeyUp = (event) => {
@@ -319,20 +311,6 @@ export class FoldableDeviceConfigurator extends LitElement {
       this._seam_slider.style.display = 'block';
       this._preview.style.display = 'flex';
     }
-  }
-
-  _updatePreview = () => {
-    this._previewConfig = this._frame.contentWindow['__foldables_env_vars__'];
-    if (!this._previewConfig) {
-      console.error('foldable device polyfill was not found, make sure to include it in your project.')
-      return;
-    }
-    const config = {
-      spanning: this.spanning,
-      foldSize: this.foldWidth,
-      browserShellSize: this._browser_shell_size
-    }
-    this._previewConfig.update(config);
   }
 
   _startDrag = async (event) => {
@@ -378,7 +356,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     if (window.innerHeight > 752) {
       this.spanning = 'single-fold-horizontal';
       this.foldWidth = 30;
-      this._updateConfig();
+      this._updateFoldablesFeature();
       setTimeout( () => {
         for (const sheet of document.styleSheets) {
           if (sheet.ownerNode.className === '__foldables_env_vars__') {
@@ -396,7 +374,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     } else {
       this.spanning = 'none';
       this.foldWidth = 0;
-      this._updateConfig();
+      this._updateFoldablesFeature();
     }
 
     this._currentOrientation = this.spanning;
@@ -409,7 +387,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   _seamValueUpdated = async (event) => {
     this.foldWidth = event.target.value;
     this.shadowRoot.host.style.setProperty('--device-fold-width', event.target.value + 'px');
-    this._updateConfig();
+    this._updateFoldablesFeature();
   }
 
   get foldWidth() {
@@ -424,7 +402,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     const selectedIndex = this._orientation_select.selectedIndex;
     this.spanning = this._orientation_select[selectedIndex].value
     this._updatePreviewRotation();
-    this._updateConfig();
+    this._updateFoldablesFeature();
     this._calculateAndApplyScaleFactor();
   }
 
@@ -520,7 +498,7 @@ export class FoldableDeviceConfigurator extends LitElement {
           this._currentOrientation = this.spanning = 'single-fold-vertical';
         this._currentDevice = 'custom';
         this._updatePreviewConfiguration();
-        this._updateConfig();
+        this._updateFoldablesFeature();
         break;
       case 'neo':
         this._orientation_select.disabled = false;
@@ -533,7 +511,7 @@ export class FoldableDeviceConfigurator extends LitElement {
         if (this._spanning === 'none')
           this._currentOrientation = this.spanning = 'single-fold-vertical';
         this._updatePreviewConfiguration();
-        this._updateConfig();
+        this._updateFoldablesFeature();
         break;
       case 'duo':
         this._orientation_select.disabled = false;
@@ -546,7 +524,7 @@ export class FoldableDeviceConfigurator extends LitElement {
         if (this._spanning === 'none')
           this._currentOrientation = this.spanning = 'single-fold-vertical';
         this._updatePreviewConfiguration();
-        this._updateConfig();
+        this._updateFoldablesFeature();
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
@@ -573,7 +551,7 @@ export class FoldableDeviceConfigurator extends LitElement {
         }
         this._currentDevice = 'hsb';
         this._updatePreviewConfiguration();
-        this._updateConfig();
+        this._updateFoldablesFeature();
           break;
       default:
         this._orientation_select.disabled = true;
@@ -585,7 +563,7 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._device_hinge.classList.remove('fold');
         this._device_hinge.classList.add('hinge');
         this._updatePreviewConfiguration();
-        this._updateConfig();
+        this._updateFoldablesFeature();
     }
   }
 
@@ -647,17 +625,11 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._calculateAndApplyScaleFactor();
   }
 
-  _updateConfig() {
-    const config = {
-      spanning: this.spanning,
-      foldSize: this.foldWidth,
-      browserShellSize: this._browser_shell_size
-    }
-    console.table(config);
-    update(config);
+  _updateFoldablesFeature() {
+    const spanningFeat = new FoldablesFeature;
+    spanningFeat.foldSize = this.foldWidth;
+    spanningFeat.spanning = this.spanning;
     this._seam_slider.value = this.foldWidth;
-    if (this._frameHasLoaded)
-      this._updatePreview();
   }
 
   _debounce(fn, wait) {
