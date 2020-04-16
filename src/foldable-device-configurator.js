@@ -180,7 +180,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
 
     .hinge {
-      width: calc(var(--device-fold-width) + 2 * var(--device-border));
+      width: var(--device-fold-width);
       height: calc(var(--device-screen1-height) + 2 *var(--device-bezel-vertical));
       z-index: 6;
       background-color: black;
