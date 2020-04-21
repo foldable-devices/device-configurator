@@ -22,7 +22,7 @@
     ]
   },
   "scripts": {
-    "start": "es-dev-server --node-resolve --watch --open demo/index.html --port 8081",
+    "start": "es-dev-server --node-resolve --watch --babel --open demo/index.html --port 8081",
     "build": "rimraf build && rollup -c rollup.config.js && rimraf web_modules && snowpack --optimize",
     "regen-package-lock": "rimraf node_modules && rimraf package-lock.json; npm install"
   },
