@@ -680,7 +680,7 @@ export class FoldableDeviceConfigurator extends LitElement {
       </div>
       <div id="header">Foldable Devices</div>
       <div id="content">
-        <div class="category">Device</div>
+        <label for="device-select" class="category">Device</label>
         <select id="device-select">
           <option value="standard">Off</option>
           <option value="custom">Custom...</option>
@@ -691,7 +691,7 @@ export class FoldableDeviceConfigurator extends LitElement {
             <option value="hsb">HSB</option>
           </optgroup>
         </select>
-        <div class="category">Orientation</div>
+        <label for="orientation-select" class="category">Orientation</label>
         <select id="orientation-select" disabled>
           <option value="single-fold-vertical">Vertical</option>
           <option value="single-fold-horizontal">Horizontal</option>
@@ -708,11 +708,11 @@ export class FoldableDeviceConfigurator extends LitElement {
               </div>
               <div class="screen left"></div>
             </div>
-            <iframe id="frame"></iframe>
+            <iframe id="frame" title="Preview of the device"></iframe>
           </div>
         </div>
         <div id="seam-container">
-          <div class="category">Seam width</div>
+          <label for="seam" class="category">Seam width</label>
           <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
         </div>
         <div class="legend"> If you close the configurator use CTRL + i to show it again </div>
