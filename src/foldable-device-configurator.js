@@ -359,13 +359,13 @@ export class FoldableDeviceConfigurator extends LitElement {
       this._updateFoldablesFeature();
       setTimeout( () => {
         for (const sheet of document.styleSheets) {
-          if (sheet.ownerNode.className === '__foldables_env_vars__') {
+          if (sheet.ownerNode.className === '__foldables_sheet__') {
             this._addZenbookVariables(sheet);
             break;
           }
         }
         for (const sheet of this._frame.contentDocument.styleSheets) {
-          if (sheet.ownerNode.className === '__foldables_env_vars__') {
+          if (sheet.ownerNode.className === '__foldables_sheet__') {
             this._addZenbookVariables(sheet);
             break;
           }
