@@ -606,17 +606,33 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._seam_container.style.display = 'none';
         break;
       case 'hsb':
+          this._orientation_select.disabled = false;
+          this._seam_container.style.display = 'flex';
+          this._seam_slider.disabled = false;
+          this._device_hinge.classList.add('fold');
+          this._device_hinge.classList.remove('hinge');
+          this._seam_slider.layout();
+          this.foldWidth = 114;
+          if (this._spanning === 'none') {
+            this._currentOrientation = this.spanning = 'single-fold-horizontal';
+          }
+          this._currentDevice = 'hsb';
+          this._updatePreviewConfiguration();
+          this._updateFoldablesFeature();
+            break;
+      case 'fold':
         this._orientation_select.disabled = false;
         this._seam_container.style.display = 'flex';
-        this._seam_slider.disabled = false;
+        this._seam_slider.disabled = true;
+        this._seam_container.style.display = 'none';
         this._device_hinge.classList.add('fold');
         this._device_hinge.classList.remove('hinge');
         this._seam_slider.layout();
-        this.foldWidth = 114;
+        this.foldWidth = 10;
         if (this._spanning === 'none') {
-          this._currentOrientation = this.spanning = 'single-fold-horizontal';
+          this._currentOrientation = this.spanning = 'single-fold-vertical';
         }
-        this._currentDevice = 'hsb';
+        this._currentDevice = 'fold';
         this._updatePreviewConfiguration();
         this._updateFoldablesFeature();
           break;
@@ -671,6 +687,13 @@ export class FoldableDeviceConfigurator extends LitElement {
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '600px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '600px');
         this.shadowRoot.host.style.setProperty('--device-fold-width', '28px');
+        break;
+      case 'fold':
+        this.shadowRoot.host.style.setProperty('--device-screen1-width', '614px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-width', '614px');
+        this.shadowRoot.host.style.setProperty('--device-screen1-height', '861px');
+        this.shadowRoot.host.style.setProperty('--device-screen2-height', '861px');
+        this.shadowRoot.host.style.setProperty('--device-fold-width', '10px');
         break;
       case 'asus':
         this.shadowRoot.host.style.setProperty('--device-screen1-width', '440px');
@@ -839,6 +862,7 @@ export class FoldableDeviceConfigurator extends LitElement {
             <option value="neo">Surface Neo</option>
             <option value="duo">Surface Duo</option>
             <option value="asus">Asus Zenbook Pro Duo</option>
+            <option value="fold">Samsung Galaxy Fold</option>
             <option value="hsb">HSB</option>
           </optgroup>
         </select>
