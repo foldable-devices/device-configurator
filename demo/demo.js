@@ -12,6 +12,7 @@ export class MainApplication extends LitElement {
     :host {
       width: 100vw;
       height: 100vh;
+      overflow: hidden;
     }
 
     *,
@@ -25,6 +26,7 @@ export class MainApplication extends LitElement {
     .content {
       display: flex;
       flex-direction: row;
+      overflow: hidden;
     }
 
     .main-container {
@@ -114,8 +116,9 @@ export class MainApplication extends LitElement {
         flex-direction: row;
       }
       .second-container {
-        height: 0vh;
-        width: 0vw;
+        height: 0;
+        width: 0;
+        display: none;
       }
     }
   `;
