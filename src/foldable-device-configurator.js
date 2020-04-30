@@ -49,10 +49,11 @@ export class FoldableDeviceConfigurator extends LitElement {
       width: 100%;
       height: auto;
       position: absolute;
+      cursor: pointer;
     }
 
     #main-icon:hover {
-      filter: drop-shadow(2px 2px 5px black);
+      opacity: 0.8;
     }
 
     #main-icon {
@@ -328,8 +329,8 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._seam_slider = this.shadowRoot.getElementById('seam');
     this._seam_container = this.shadowRoot.getElementById('seam-container');
 
-    this._header.onpointerdown = this._startDrag.bind(this);
-    this._bubble.onpointerdown = this._startDrag.bind(this);
+    this._header.onpointerdown = this._startDragConfigurator.bind(this);
+    this._bubble.onpointerdown = this._startDragBubble.bind(this);
     this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
     this._orientation_select.onchange = this._orientationChanged.bind(this);
     this._seam_slider.oninput = this._seamValueUpdated.bind(this);
@@ -358,6 +359,22 @@ export class FoldableDeviceConfigurator extends LitElement {
       this._showBubble();
   }
 
+  _startDragBubble = async(event) => {
+    this._startDrag(event);
+    this._bubble.setPointerCapture(this._pointerId);
+    this._bubble.onpointerup = this._stopDragBubble;
+    this._bubble.onpointercancel = this._stopDragBubble;
+    this._bubble.onpointermove = this._bubbleMove;
+  }
+
+  _startDragConfigurator = async(event) => {
+    this._startDrag(event);
+    this._header.setPointerCapture(this._pointerId);
+    this._header.onpointerup = this._stopDragConfigurator;
+    this._header.onpointercancel = this._stopDragConfigurator;
+    this._header.onpointermove = this._pointerMove;
+  }
+
   _startDrag = async (event) => {
     if (this._isFullscreen)
       return;
@@ -365,11 +382,12 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._x = event.clientX - this._offset_x;
     this._y = event.clientY - this._offset_y;
     this._pointerId = event.pointerId;
-    this._bubble.setPointerCapture(this._pointerId);
-    this._bubble.onpointerup = this._stopDrag;
-    this._bubble.onpointercancel = this._stopDrag;
-    this._bubble.onpointermove = this._pointerMove;
     event.preventDefault();
+  }
+
+  _bubbleMove = async (event) => {
+    this._pointerMove(event);
+    this._lastBubblePosition = { x: this._offset_x, y: this._offset_y};
   }
 
   _pointerMove = async (event) => {
@@ -397,12 +415,23 @@ export class FoldableDeviceConfigurator extends LitElement {
     event.preventDefault();
   }
 
-  _stopDrag = async (event) => {
-    this._x = this._offset_x;
-    this._y = this._offset_y;
+  _stopDragConfigurator = async (event) => {
+    this._header.onpointerup = null;
+    this._header.onpointermove = null;
+    this._header.releasePointerCapture(this._pointerId);
+    this._stopDrag(event);
+  }
+
+  _stopDragBubble = async (event) => {
     this._bubble.onpointerup = null;
     this._bubble.onpointermove = null;
     this._bubble.releasePointerCapture(this._pointerId);
+    this._stopDrag(event);
+  }
+
+  _stopDrag = async (event) => {
+    this._x = this._offset_x;
+    this._y = this._offset_y;
     if (!this._moved) {
       this._showConfigurator();
     }
@@ -763,9 +792,11 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._preview.style.display = 'none';
     this._bubble.style.visibility = 'visible';
     this._configurator.style.visibility = 'hidden';
+    this._updateConfiguratorPosition(this._lastBubblePosition.x, this._lastBubblePosition.y);
   }
 
   _showConfigurator() {
+    this._lastBubblePosition = { x: this._offset_x, y: this._offset_y}
     this.shadowRoot.host.classList.add('configurator');
     this.shadowRoot.host.style.visibility = 'visible';
     this._seam_slider.style.display = 'block';
@@ -804,7 +835,7 @@ export class FoldableDeviceConfigurator extends LitElement {
             <feComposite in="SourceGraphic" in2="offset" operator="over" result="composite2"/>
           </filter>
       </defs>
-      <circle style="fill:#e0e0e0;stroke:#000000;stroke-width:2;fill-opacity:0.94901961;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1588)"
+      <circle style="fill:#f2f2f2;stroke:#cccccc;stroke-width:2;fill-opacity:0.94901961;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1588)"
               r="26.459999" cx="30.198048" cy="29.674902"/>
       <rect style="fill:#000000;stroke:#969696;stroke-width:1.04591477;stroke-opacity:1" x="11.943073" y="13.627522" width="36.014523"
             height="32.950699"/>
