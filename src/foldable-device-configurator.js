@@ -2,6 +2,80 @@ import { LitElement, html, css } from '../web_modules/lit-element.js';
 import '../web_modules/@material/mwc-slider.js';
 import { FoldablesFeature } from "../web_modules/spanning-css-polyfill.js";
 
+export const DeviceType = {
+  Foldable: 'foldable',
+  Dual: 'dual',
+};
+
+
+class Icon extends LitElement {
+  static styles = css`
+    :host {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      opacity: 0.5;
+    }
+
+    :host(:hover) {
+      opacity: 1;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  `;
+}
+
+class CloseIcon extends Icon {
+  render() {
+    return html`
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+        <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
+      </svg>
+    `;
+  }
+}
+customElements.define('close-icon', CloseIcon);
+
+class FullScreenIcon extends Icon {
+  render() {
+    return html`
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="-6 -6 18 18" >
+        <path d="M4.5 11H3v4h4v-1.5H4.5V11zM3 7h1.5V4.5H7V3H3v4zm10.5 6.5H11V15h4v-4h-1.5v2.5zM11 3v1.5h2.5V7H15V3h-4z"  transform="translate(-6,-6)"/>
+        <animate attributeName="fill" values="#797979;#ca0700;#797979" dur="2s" repeatCount="10" />
+        <animate attributeType="CSS" attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="10" />
+        <animateTransform  attributeName="transform" additive="sum" type="scale" values="1;1.1;1" dur="2s" repeatCount="10" />
+      </svg>
+    `;
+  }
+}
+customElements.define('fullscreen-icon', FullScreenIcon);
+
+class SplitViewIcon extends Icon {
+  render() {
+    return html`
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" >
+          <path d="M 11.110169,20.601695 V 3.6016952 c 0,-0.55 -0.45,-1 -1,-1 H 4.1101692 c -0.55,0 -1,0.45 -1,1 V 20.601695 c 0,0.55 0.45,1 1,1 h 5.9999998 c 0.55,0 1,-0.45 1,-1 z m 10,0 V 3.6016952 c 0,-0.55 -0.45,-1 -1,-1 h -6 c -0.55,0 -1,0.45 -1,1 V 20.601695 c 0,0.55 0.45,1 1,1 h 6 c 0.55,0 1,-0.45 1,-1 z"/>
+        </svg>
+    `;
+  }
+}
+customElements.define('splitview-icon', SplitViewIcon);
+
+
+class RotateIcon extends Icon {
+  render() {
+    return html`
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" >
+        <path d="M7.34 6.41L.86 12.9l6.49 6.48 6.49-6.48-6.5-6.49zM3.69 12.9l3.66-3.66L11 12.9l-3.66 3.66-3.65-3.66zm15.67-6.26C17.61 4.88 15.3 4 13 4V.76L8.76 5 13 9.24V6c1.79 0 3.58.68 4.95 2.05 2.73 2.73 2.73 7.17 0 9.9C16.58 19.32 14.79 20 13 20c-.97 0-1.94-.21-2.84-.61l-1.49 1.49C10.02 21.62 11.51 22 13 22c2.3 0 4.61-.88 6.36-2.64 3.52-3.51 3.52-9.21 0-12.72z"/>
+      </svg>
+    `;
+  }
+}
+customElements.define('rotate-icon', RotateIcon);
+
 export class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
     :host {
@@ -9,8 +83,8 @@ export class FoldableDeviceConfigurator extends LitElement {
       position: absolute;
       font-size: 12px;
       top: 2%;
-      width: 5vw;
-      height: auto;
+      width: 7vw;
+      height: 50px;
 
       /* Surface Duo */
       --device-screen1-width: 450px;
@@ -26,7 +100,7 @@ export class FoldableDeviceConfigurator extends LitElement {
 
     @media (min-width: 320px) and (max-width: 1024px) {
       :host {
-        width: 15vw;
+        width: 30vw;
       }
     }
 
@@ -42,14 +116,33 @@ export class FoldableDeviceConfigurator extends LitElement {
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
     }
 
-    #bubble {
-      user-select: none;
-      touch-action: none;
-      margin: 5px;
+    #mini-configurator {
+      font-size: 0.9em;
       width: 100%;
-      height: auto;
+      height: 100%;
       position: absolute;
-      cursor: pointer;
+      background-color: #f2f2f2;
+      border: 1px solid #cccccc;
+      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+    }
+
+    #mini-configurator-header {
+      height: 20px;
+    }
+
+    .icon-row {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    .toggle {
+      background-color: #b8b8b8;
+      opacity: 1;
+      border-radius: 4px;
     }
 
     #main-icon:hover {
@@ -61,7 +154,7 @@ export class FoldableDeviceConfigurator extends LitElement {
       height: auto;
     }
 
-    #header {
+    .header {
       background-color: #f2f2f2;
       border-bottom: 1px solid #cccccc;
       height: 28px;
@@ -115,28 +208,12 @@ export class FoldableDeviceConfigurator extends LitElement {
       position: absolute;
       right: 5px;
       top: 7px;
-      width: 18px;
-      height: 18px;
-      opacity: 0.5;
-      cursor: initial;
-    }
-
-    .close:hover {
-      opacity: 1;
     }
 
     .fullscreen {
       position: absolute;
       right: 30px;
       top: 7px;
-      width: 18px;
-      height: 18px;
-      opacity: 0.5;
-      cursor: initial;
-    }
-
-    .fullscreen:hover {
-      opacity: 1;
     }
 
     .minimize {
@@ -270,9 +347,14 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
   `;
 
-  _bubble;
+  static get properties() {
+    return { spanning: { type: String} };
+  }
+
+  _mini_configurator_header;
+  _mini_configurator;
   _configurator;
-  _header;
+  _configurator_header;
   _device_type_select;
   _orientation_select;
   _seam_slider;
@@ -305,6 +387,11 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
   }
 
+  constructor() {
+    super();
+    this._spanning = 'none'
+  }
+
   firstUpdated() {
     if (this._inIframe()) {
       this.shadowRoot.host.style.display = 'none';
@@ -321,16 +408,17 @@ export class FoldableDeviceConfigurator extends LitElement {
       return;
     }
 
-    this._bubble = this.shadowRoot.querySelector('#bubble');
+    this._mini_configurator_header = this.shadowRoot.querySelector('#mini-configurator-header');
+    this._mini_configurator = this.shadowRoot.querySelector('#mini-configurator');
     this._configurator = this.shadowRoot.querySelector('#configurator');
-    this._header = this.shadowRoot.querySelector('#header');
+    this._configurator_header = this.shadowRoot.querySelector('#configurator-header');
     this._device_type_select = this.shadowRoot.querySelector('#device-select');
     this._orientation_select = this.shadowRoot.querySelector('#orientation-select');
     this._seam_slider = this.shadowRoot.getElementById('seam');
     this._seam_container = this.shadowRoot.getElementById('seam-container');
 
-    this._header.onpointerdown = this._startDragConfigurator.bind(this);
-    this._bubble.onpointerdown = this._startDragBubble.bind(this);
+    this._configurator_header.onpointerdown = this._startDragConfigurator.bind(this);
+    this._mini_configurator_header.onpointerdown = this._startDragMiniConfigurator.bind(this);
     this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
     this._orientation_select.onchange = this._orientationChanged.bind(this);
     this._seam_slider.oninput = this._seamValueUpdated.bind(this);
@@ -339,7 +427,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._seam_slider.disabled = true;
 
     this._browser_shell_size = 0;
-    this.spanning = 'none';
+    this._spanning = 'none';
     this.foldWidth = 0;
 
     this._preview = this.shadowRoot.querySelector('#preview');
@@ -350,29 +438,30 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._frame.src = window.location.href;
     this._updateFoldablesFeature();
     this._currentOrientation = 'none';
+    this._deviceType = DeviceType.Dual;
     document.addEventListener('keyup', this._handleKeyUp, false);
     console.log('Device Pixel Ratio : ' + window.devicePixelRatio);
   }
 
   _handleKeyUp = (event) => {
     if(event.keyCode == 73 && event.ctrlKey)
-      this._showBubble();
+      this._showMiniConfigurator();
   }
 
-  _startDragBubble = async(event) => {
+  _startDragMiniConfigurator = async(event) => {
     this._startDrag(event);
-    this._bubble.setPointerCapture(this._pointerId);
-    this._bubble.onpointerup = this._stopDragBubble;
-    this._bubble.onpointercancel = this._stopDragBubble;
-    this._bubble.onpointermove = this._bubbleMove;
+    this._mini_configurator_header.setPointerCapture(this._pointerId);
+    this._mini_configurator_header.onpointerup = this._stopDragMiniConfigurator;
+    this._mini_configurator_header.onpointercancel = this._stopDragMiniConfigurator;
+    this._mini_configurator_header.onpointermove = this._miniConfiguratorMove;
   }
 
   _startDragConfigurator = async(event) => {
     this._startDrag(event);
-    this._header.setPointerCapture(this._pointerId);
-    this._header.onpointerup = this._stopDragConfigurator;
-    this._header.onpointercancel = this._stopDragConfigurator;
-    this._header.onpointermove = this._pointerMove;
+    this._configurator_header.setPointerCapture(this._pointerId);
+    this._configurator_header.onpointerup = this._stopDragConfigurator;
+    this._configurator_header.onpointercancel = this._stopDragConfigurator;
+    this._configurator_header.onpointermove = this._pointerMove;
   }
 
   _startDrag = async (event) => {
@@ -385,9 +474,9 @@ export class FoldableDeviceConfigurator extends LitElement {
     event.preventDefault();
   }
 
-  _bubbleMove = async (event) => {
+  _miniConfiguratorMove = async (event) => {
     this._pointerMove(event);
-    this._lastBubblePosition = { x: this._offset_x, y: this._offset_y};
+    this._lastMiniConfiguratorPosition = { x: this._offset_x, y: this._offset_y};
   }
 
   _pointerMove = async (event) => {
@@ -397,11 +486,9 @@ export class FoldableDeviceConfigurator extends LitElement {
 
     let x = event.clientX - this._x;
     let y = event.clientY - this._y;
-    if (this._offset_x != x || this._offset_y != y)
-      this._moved = true;
     const style = window.getComputedStyle(this.shadowRoot.host);
     const configuratorWith = parseFloat(style.width);
-    const configuratorHeight = parseFloat(style.height)
+    const configuratorHeight = parseFloat(style.height);
     if (x < 0)
       x = 0;
     if (y < 0)
@@ -416,26 +503,22 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   _stopDragConfigurator = async (event) => {
-    this._header.onpointerup = null;
-    this._header.onpointermove = null;
-    this._header.releasePointerCapture(this._pointerId);
+    this._configurator_header.onpointerup = null;
+    this._configurator_header.onpointermove = null;
+    this._configurator_header.releasePointerCapture(this._pointerId);
     this._stopDrag(event);
   }
 
-  _stopDragBubble = async (event) => {
-    this._bubble.onpointerup = null;
-    this._bubble.onpointermove = null;
-    this._bubble.releasePointerCapture(this._pointerId);
+  _stopDragMiniConfigurator = async (event) => {
+    this._mini_configurator_header.onpointerup = null;
+    this._mini_configurator_header.onpointermove = null;
+    this._mini_configurator_header.releasePointerCapture(this._pointerId);
     this._stopDrag(event);
   }
 
   _stopDrag = async (event) => {
     this._x = this._offset_x;
     this._y = this._offset_y;
-    if (!this._moved) {
-      this._showConfigurator();
-    }
-    this._moved = false;
   }
 
   _onResize = async (event) => {
@@ -496,7 +579,7 @@ export class FoldableDeviceConfigurator extends LitElement {
 
   _orientationChanged(event) {
     const selectedIndex = this._orientation_select.selectedIndex;
-    this.spanning = this._orientation_select[selectedIndex].value
+    this.spanning = this._orientation_select[selectedIndex].value;
     this._updatePreviewRotation();
     this._updateFoldablesFeature();
     this._calculateAndApplyScaleFactor();
@@ -532,7 +615,7 @@ export class FoldableDeviceConfigurator extends LitElement {
 
   _updatePreviewRotation() {
     // We're animating only if we're rotating the device.
-    if (this._spanning != this._currentOrientation) {
+    if (this.spanning != this._currentOrientation) {
       this._preview.style.transition = 'transform 0.7s ease-in-out';
       // Only animate the rotation.
       this._preview.addEventListener('transitionend', this._rotationFinished);
@@ -563,6 +646,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   set spanning(value) {
+    let oldSpanning = this._spanning;
     switch(value) {
       case 'none':
       case 'single-fold-vertical':
@@ -576,6 +660,7 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.selectedIndex = 0;
     }
     this._spanning = value;
+    this.requestUpdate('spanning', oldSpanning);
   }
 
   _deviceTypeChanged(event) {
@@ -583,6 +668,8 @@ export class FoldableDeviceConfigurator extends LitElement {
     const deviceType = this._device_type_select[selectedIndex].value;
     window.removeEventListener('resize', this._resizeHandler);
     this._resizeHandler = null;
+    if (this.spanning === 'none')
+      this._currentOrientation = this.spanning = 'single-fold-vertical';
     switch(deviceType) {
       case 'custom':
         this._seam_container.style.display = 'flex';
@@ -590,46 +677,31 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._seam_slider.disabled = false;
         this._seam_slider.layout();
         this.foldWidth = 24;
-        if (this._spanning === 'none')
-          this._currentOrientation = this.spanning = 'single-fold-vertical';
+        this._deviceType = DeviceType.Dual;
         this._currentDevice = 'custom';
-        this._updatePreviewConfiguration();
-        this._updateFoldablesFeature();
         break;
       case 'neo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
-        this._device_hinge.classList.remove('fold');
-        this._device_hinge.classList.add('hinge');
+        this._deviceType = DeviceType.Dual;
         this.foldWidth = 24;
         this._currentDevice = 'neo';
-        if (this._spanning === 'none')
-          this._currentOrientation = this.spanning = 'single-fold-vertical';
-        this._updatePreviewConfiguration();
-        this._updateFoldablesFeature();
         break;
       case 'duo':
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
-        this._device_hinge.classList.remove('fold');
-        this._device_hinge.classList.add('hinge');
+        this._deviceType = DeviceType.Dual;
         this.foldWidth = 28;
         this._currentDevice = 'duo';
-        if (this._spanning === 'none')
-          this._currentOrientation = this.spanning = 'single-fold-vertical';
-        this._updatePreviewConfiguration();
-        this._updateFoldablesFeature();
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
         window.addEventListener('resize', this._resizeHandler);
-        this._device_hinge.classList.remove('fold');
-        this._device_hinge.classList.add('hinge');
+        this._deviceType = DeviceType.Dual;
         this._handleAsusSpanning();
         this._currentDevice = 'asus';
-        this._updatePreviewConfiguration();
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
@@ -638,32 +710,20 @@ export class FoldableDeviceConfigurator extends LitElement {
           this._orientation_select.disabled = false;
           this._seam_container.style.display = 'flex';
           this._seam_slider.disabled = false;
-          this._device_hinge.classList.add('fold');
-          this._device_hinge.classList.remove('hinge');
+          this._deviceType = DeviceType.Foldable;
           this._seam_slider.layout();
           this.foldWidth = 114;
-          if (this._spanning === 'none') {
-            this._currentOrientation = this.spanning = 'single-fold-horizontal';
-          }
           this._currentDevice = 'hsb';
-          this._updatePreviewConfiguration();
-          this._updateFoldablesFeature();
-            break;
+          break;
       case 'fold':
         this._orientation_select.disabled = false;
         this._seam_container.style.display = 'flex';
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
-        this._device_hinge.classList.add('fold');
-        this._device_hinge.classList.remove('hinge');
+        this._deviceType = DeviceType.Foldable;
         this._seam_slider.layout();
         this.foldWidth = 10;
-        if (this._spanning === 'none') {
-          this._currentOrientation = this.spanning = 'single-fold-vertical';
-        }
         this._currentDevice = 'fold';
-        this._updatePreviewConfiguration();
-        this._updateFoldablesFeature();
           break;
       default:
         this._orientation_select.disabled = true;
@@ -672,11 +732,10 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._currentOrientation = this.spanning = 'none';
         this._currentDevice = 'duo';
         this.foldWidth = 0;
-        this._device_hinge.classList.remove('fold');
-        this._device_hinge.classList.add('hinge');
-        this._updatePreviewConfiguration();
-        this._updateFoldablesFeature();
+        this._deviceType = DeviceType.Dual;
     }
+    this._updatePreviewConfiguration();
+    this._updateFoldablesFeature();
   }
 
   _calculateAndApplyScaleFactor() {
@@ -740,6 +799,13 @@ export class FoldableDeviceConfigurator extends LitElement {
         break;
       default:
     }
+    if (this._deviceType === DeviceType.Foldable) {
+      this._device_hinge.classList.add('fold');
+      this._device_hinge.classList.remove('hinge');
+    } else {
+      this._device_hinge.classList.remove('fold');
+      this._device_hinge.classList.add('hinge');
+    }
     this._updatePreviewRotation();
     this._calculateAndApplyScaleFactor();
   }
@@ -778,11 +844,11 @@ export class FoldableDeviceConfigurator extends LitElement {
     this.shadowRoot.host.style.visibility = 'hidden';
     this._seam_slider.style.display = 'none';
     this._preview.style.display = 'none';
-    this._bubble.style.visibility = 'hidden';
+    this._mini_configurator.style.visibility = 'hidden';
     this._configurator.style.visibility = 'hidden';
   }
 
-  _showBubble() {
+  _showMiniConfigurator() {
     if (this._isFullscreen)
       this._toggleFullscreen();
     this.shadowRoot.host.classList.remove('fullscreen');
@@ -790,18 +856,18 @@ export class FoldableDeviceConfigurator extends LitElement {
     this.shadowRoot.host.style.visibility = 'visible';
     this._seam_slider.style.display = 'none';
     this._preview.style.display = 'none';
-    this._bubble.style.visibility = 'visible';
+    this._mini_configurator.style.visibility = 'visible';
     this._configurator.style.visibility = 'hidden';
-    this._updateConfiguratorPosition(this._lastBubblePosition.x, this._lastBubblePosition.y);
+    this._updateConfiguratorPosition(this._lastMiniConfiguratorPosition.x, this._lastMiniConfiguratorPosition.y);
   }
 
   _showConfigurator() {
-    this._lastBubblePosition = { x: this._offset_x, y: this._offset_y}
+    this._lastMiniConfiguratorPosition = { x: this._offset_x, y: this._offset_y}
     this.shadowRoot.host.classList.add('configurator');
     this.shadowRoot.host.style.visibility = 'visible';
     this._seam_slider.style.display = 'block';
     this._preview.style.display = 'flex';
-    this._bubble.style.visibility = 'hidden';
+    this._mini_configurator.style.visibility = 'hidden';
     this._configurator.style.visibility = 'visible';
     let x = this._offset_x;
     let y = this._offset_y;
@@ -812,8 +878,8 @@ export class FoldableDeviceConfigurator extends LitElement {
       y = window.innerHeight - configuratorHeight;
     if (this._offset_x + configuratorWith >= window.innerWidth)
       x = window.innerWidth - configuratorWith;
-
     this._updateConfiguratorPosition(x, y);
+    this._updatePreviewConfiguration()
   }
 
   _updateConfiguratorPosition(x, y) {
@@ -822,68 +888,46 @@ export class FoldableDeviceConfigurator extends LitElement {
     this.shadowRoot.host.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
   }
 
+  _toggleSpanning() {
+    if (this.spanning != 'none')
+      this._device_type_select.selectedIndex = 0;
+    else
+      this._device_type_select.selectedIndex = 2;
+    this._deviceTypeChanged();
+  }
+
+  _changeOrientation() {
+    if (this.spanning === 'none')
+      return;
+    if (this.spanning === 'single-fold-vertical')
+      this.spanning = 'single-fold-horizontal';
+    else
+      this.spanning = 'single-fold-vertical';
+    this._updatePreviewRotation();
+    this._updateFoldablesFeature();
+    this._calculateAndApplyScaleFactor();
+  }
+
   render() {
     return html`
-    <div id="bubble">
-      <svg id="main-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">
-        <defs>
-          <filter style="color-interpolation-filters:sRGB;" id="filter1588">
-            <feFlood flood-opacity="0.498039" flood-color="rgb(0,0,0)" result="flood"/>
-            <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
-            <feGaussianBlur in="composite1" stdDeviation="1.6" result="blur"/>
-            <feOffset dx="0.260417" dy="2.9" result="offset"/>
-            <feComposite in="SourceGraphic" in2="offset" operator="over" result="composite2"/>
-          </filter>
-      </defs>
-      <circle style="fill:#f2f2f2;stroke:#cccccc;stroke-width:2;fill-opacity:0.94901961;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1588)"
-              r="26.459999" cx="30.198048" cy="29.674902"/>
-      <rect style="fill:#000000;stroke:#969696;stroke-width:1.04591477;stroke-opacity:1" x="11.943073" y="13.627522" width="36.014523"
-            height="32.950699"/>
-      <rect style="fill:#000000;stroke:#969696;stroke-width:0.73499995;stroke-opacity:1" x="11.787928" y="13.511369" width="17.640001"
-            height="33.222"/>
-      <rect style="fill:#000000;stroke:#969696;stroke-width:0.73500001;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-            x="30.50131" y="13.479467" width="17.640001" height="33.222"/>
-      <rect style="fill:#0e71f2;stroke:#969696;stroke-width:0.64964974;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-            x="31.768099" y="14.992944" width="15.078116" height="30.353178"/>
-      <rect style="fill:#0e71f2;stroke:#969696;stroke-width:0.64964974;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-            x="13.140842" y="14.973761" width="15.078116" height="30.353178"/>
-      <rect style="fill:#0e71f2;stroke:#969696;stroke-width:0.64964974;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
-            x="31.768099" y="14.992944" width="15.078116" height="30.353178"/>
-      <rect style="fill:#0e71f2;stroke:#969696;stroke-width:0.64964974;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:0.94901961"
-            x="13.140842" y="14.973761" width="15.078116" height="30.353178"/>
-      <rect style="fill:#ffffff;fill-opacity:0.98999999;stroke-width:0.05569178" x="13.492369" y="15.263065" width="14.367508" height="3.4798944"/>
-      <rect style="fill:#ffffff;fill-opacity:0.98999999;stroke-width:0.05545783" x="32.083931" y="15.301432" width="14.405874" height="3.4415274"/>
-      <rect style="fill:#c8dffc;stroke-width:0.05824436" x="44.208069" y="15.533369" width="0.8190853" height="0.8117733" rx="0.17551827"/>
-      <rect style="fill:#c8dffc;stroke-width:0.05824436" x="45.319687" y="15.533369" width="0.8190853" height="0.8117733" rx="0.17551827"/>
-      <path style="fill:#0e71f2;fill-opacity:0.22000002;stroke-width:0.05631923"
-            d="m 15.13054,16.945463 c 0,-0.192158 0.14693,-0.347902 0.328213,-0.347902 h 12.362755 v 1.797498 H 15.458753 c -0.181283,0 -0.328213,-0.155745 -0.328213,-0.347904 z"/>
-      <path style="fill:#0e71f2;fill-opacity:0.22000002;stroke-width:0.05664341"
-            d="m 32.083931,16.597561 h 13.722836 c 0.183376,0 0.332003,0.155744 0.332003,0.347902 v 1.101692 c 0,0.192159 -0.148627,0.347904 -0.332003,0.347904 H 32.083931 Z"/>
-      <path style="fill:#ffffff;fill-opacity:0.98999999;stroke:#c8dffc;stroke-width:0.16198945"
-            d="m 14.218595,18.001583 -0.550764,-0.550765 0.550764,-0.550766"/>
-      <path style="stroke:#c8dffc;stroke-width:0.16198945" d="M 14.915149,17.450818 H 13.667831"/>
-     </svg>
+    <div id="mini-configurator">
+      <div class="header" id="mini-configurator-header">Foldable Configurator</div>
+      <div class="icon-row">
+        <splitview-icon @click="${this._toggleSpanning}" class="${this.spanning != 'none'? 'toggle' : ''}"></splitview-icon>
+        <rotate-icon @click="${this._changeOrientation}"></rotate-icon>
+        <fullscreen-icon @click="${this._showConfigurator}"></fullscreen-icon>
+        <close-icon @click="${this._closeConfigurator}"></close-icon>
+      </div>
     </div>
     <div id="configurator">
-      <div class="minimize" @click="${this._showBubble}">
+      <div class="minimize" @click="${this._showMiniConfigurator}">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
           <path d="M6 19h12v2H6z"/><path d="M0 0h24v24H0V0z" fill="none"/>
         </svg>
       </div>
-      <div class="close" @click="${this._closeConfigurator}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-          <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
-        </svg>
-      </div>
-      <div class="fullscreen" @click="${this._toggleFullscreen}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="-6 -6 18 18" >
-          <path d="M4.5 11H3v4h4v-1.5H4.5V11zM3 7h1.5V4.5H7V3H3v4zm10.5 6.5H11V15h4v-4h-1.5v2.5zM11 3v1.5h2.5V7H15V3h-4z"  transform="translate(-6,-6)"/>
-          <animate attributeName="fill" values="#797979;#ca0700;#797979" dur="2s" repeatCount="10" />
-          <animate attributeType="CSS" attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="10" />
-          <animateTransform  attributeName="transform" additive="sum" type="scale" values="1;1.1;1" dur="2s" repeatCount="10" />
-        </svg>
-      </div>
-      <div id="header">Foldable Devices</div>
+      <close-icon class="close" @click="${this._closeConfigurator}"></close-icon>
+      <fullscreen-icon class="fullscreen" @click="${this._toggleFullscreen}"></fullscreen-icon>
+      <div class="header" id="configurator-header">Foldable Devices</div>
       <div id="content">
         <label for="device-select" class="category">Device</label>
         <select id="device-select">
