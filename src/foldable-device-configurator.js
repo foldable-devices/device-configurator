@@ -82,7 +82,8 @@ export class FoldableDeviceConfigurator extends LitElement {
       z-index: 9999;
       position: absolute;
       font-size: 12px;
-      top: 2%;
+      bottom: 2%;
+      right: 2%;
       width: 7vw;
       height: 50px;
 
