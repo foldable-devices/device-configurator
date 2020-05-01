@@ -15,6 +15,9 @@ class Icon extends LitElement {
       height: 20px;
       cursor: pointer;
       opacity: 0.5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     :host(:hover) {
@@ -76,15 +79,24 @@ class RotateIcon extends Icon {
 }
 customElements.define('rotate-icon', RotateIcon);
 
+class MinimizeIcon extends Icon {
+  render() {
+    return html`
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" >
+        <path d="M6 19h12v2H6z"/><path d="M0 0h24v24H0V0z" fill="none"/>
+      </svg>
+    `;
+  }
+}
+customElements.define('minimize-icon', MinimizeIcon);
+
 export class FoldableDeviceConfigurator extends LitElement {
   static styles = css`
     :host {
       z-index: 9999;
       position: absolute;
       font-size: 12px;
-      bottom: 2%;
-      right: 2%;
-      width: 7vw;
+      width: 8vw;
       height: 50px;
 
       /* Surface Duo */
@@ -118,7 +130,6 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
 
     #mini-configurator {
-      font-size: 0.9em;
       width: 100%;
       height: 100%;
       position: absolute;
@@ -128,7 +139,9 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
 
     #mini-configurator-header {
+      font-size: 0.9em;
       height: 20px;
+      margin-bottom: 5px;
     }
 
     .icon-row {
@@ -136,8 +149,6 @@ export class FoldableDeviceConfigurator extends LitElement {
       display: flex;
       flex-direction: row;
       justify-content: space-evenly;
-      margin-top: 5px;
-      margin-bottom: 5px;
     }
 
     .toggle {
@@ -155,16 +166,27 @@ export class FoldableDeviceConfigurator extends LitElement {
       height: auto;
     }
 
-    .header {
+    .header-background {
       background-color: #f2f2f2;
       border-bottom: 1px solid #cccccc;
       height: 28px;
+    }
+
+    .header {
       cursor: move;
       display: flex;
       justify-content: center;
       align-items: center;
       user-select: none;
       touch-action: none;
+    }
+
+    .header-configurator {
+      cursor: move;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
 
     #configurator {
@@ -176,6 +198,24 @@ export class FoldableDeviceConfigurator extends LitElement {
       height: 100%;
       visibility: hidden;
       border: 2px solid grey;
+    }
+
+    #configurator-header {
+      flex-grow: 2;
+      align-self: stretch;
+      user-select: none;
+      touch-action: none;
+      cursor: move;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .icons {
+      flex-basis: 90px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
     }
 
     #content {
@@ -205,37 +245,10 @@ export class FoldableDeviceConfigurator extends LitElement {
       display: none;
     }
 
-    .close {
-      position: absolute;
-      right: 5px;
-      top: 7px;
-    }
-
-    .fullscreen {
-      position: absolute;
-      right: 30px;
-      top: 7px;
-    }
-
-    .minimize {
-      position: absolute;
-      right: 55px;
-      top: 5px;
-      width: 18px;
-      height: 18px;
-      opacity: 0.5;
-      cursor: initial;
-    }
-
-    .minimize:hover {
-      opacity: 1;
-    }
-
     #preview-text {
       grid-column: span 2;
       font-size : 1em;
     }
-
 
     #preview-container {
       grid-column: span 2;
@@ -423,6 +436,12 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
     this._orientation_select.onchange = this._orientationChanged.bind(this);
     this._seam_slider.oninput = this._seamValueUpdated.bind(this);
+
+    const style = window.getComputedStyle(this.shadowRoot.host);
+    const configuratorWith = parseFloat(style.width);
+    const configuratorHeight = parseFloat(style.height);
+    this._updateConfiguratorPosition(window.innerWidth - configuratorWith - 20,
+                                     window.innerHeight - configuratorHeight - 20);
 
     this._orientation_select.disabled = true;
     this._seam_slider.disabled = true;
@@ -829,7 +848,6 @@ export class FoldableDeviceConfigurator extends LitElement {
   _toggleFullscreen() {
     this._isFullscreen = !this._isFullscreen;
     if (this._isFullscreen) {
-      this.shadowRoot.host.style.top = '0px';
       this.shadowRoot.host.style.transform = '';
       this.shadowRoot.host.classList.remove('configurator');
       this.shadowRoot.host.classList.add('fullscreen');
@@ -912,7 +930,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   render() {
     return html`
     <div id="mini-configurator">
-      <div class="header" id="mini-configurator-header">Foldable Configurator</div>
+      <div class="header-background header" id="mini-configurator-header">Foldable Configurator</div>
       <div class="icon-row">
         <splitview-icon @click="${this._toggleSpanning}" class="${this.spanning != 'none'? 'toggle' : ''}"></splitview-icon>
         <rotate-icon @click="${this._changeOrientation}"></rotate-icon>
@@ -921,14 +939,14 @@ export class FoldableDeviceConfigurator extends LitElement {
       </div>
     </div>
     <div id="configurator">
-      <div class="minimize" @click="${this._showMiniConfigurator}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-          <path d="M6 19h12v2H6z"/><path d="M0 0h24v24H0V0z" fill="none"/>
-        </svg>
+      <div class="header-background header-configurator">
+        <div id="configurator-header">Foldable Configurator</div>
+        <div class="icons">
+          <minimize-icon @click="${this._showMiniConfigurator}"></minimize-icon>
+          <fullscreen-icon @click="${this._toggleFullscreen}"></fullscreen-icon>
+          <close-icon @click="${this._closeConfigurator}"></close-icon>
+        </div>
       </div>
-      <close-icon class="close" @click="${this._closeConfigurator}"></close-icon>
-      <fullscreen-icon class="fullscreen" @click="${this._toggleFullscreen}"></fullscreen-icon>
-      <div class="header" id="configurator-header">Foldable Devices</div>
       <div id="content">
         <label for="device-select" class="category">Device</label>
         <select id="device-select">

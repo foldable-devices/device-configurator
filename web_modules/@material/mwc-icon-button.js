@@ -1,4 +1,4 @@
-import{b as t}from"../common/tslib.es6-416e320f.js";import{h as o}from"../common/lit-html-9957b87e.js";import{property as i,LitElement as n,css as e,customElement as c}from"../lit-element.js";import{a as r}from"../common/ripple-directive-263e3a6d.js";class a extends n{constructor(){super(...arguments),this.disabled=!1,this.icon="",this.label=""}render(){return o`<button
+import{b as t}from"../common/tslib.es6-416e320f.js";import{h as o}from"../common/lit-html-99d404bd.js";import{property as i,LitElement as n,css as e,customElement as c}from"../lit-element.js";import{a as r}from"../common/ripple-directive-6eacd212.js";class a extends n{constructor(){super(...arguments),this.disabled=!1,this.icon="",this.label=""}render(){return o`<button
     .ripple="${r()}"
     class="mdc-icon-button"
     aria-label="${this.label||this.icon}"
