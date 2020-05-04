@@ -440,8 +440,8 @@ export class FoldableDeviceConfigurator extends LitElement {
     const style = window.getComputedStyle(this.shadowRoot.host);
     const configuratorWith = parseFloat(style.width);
     const configuratorHeight = parseFloat(style.height);
-    this._updateConfiguratorPosition(window.innerWidth - configuratorWith - 20,
-                                     window.innerHeight - configuratorHeight - 20);
+    // Bottom left corner.
+    this._updateConfiguratorPosition(20, window.innerHeight - configuratorHeight - 20);
 
     this._orientation_select.disabled = true;
     this._seam_slider.disabled = true;
@@ -455,7 +455,6 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._device = this.shadowRoot.querySelector('#device');
     this._frame = this.shadowRoot.querySelector('#frame');
     this._device_hinge = this.shadowRoot.querySelector('#device-hinge');
-    this._frame.src = window.location.href;
     this._updateFoldablesFeature();
     this._currentOrientation = 'none';
     this._deviceType = DeviceType.Dual;
@@ -881,6 +880,9 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   _showConfigurator() {
+    // Load the preview.
+    if (!this._frame.src)
+      this._frame.src = window.location.href;
     this._lastMiniConfiguratorPosition = { x: this._offset_x, y: this._offset_y}
     this.shadowRoot.host.classList.add('configurator');
     this.shadowRoot.host.style.visibility = 'visible';
