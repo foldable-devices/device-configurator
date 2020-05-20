@@ -1,6 +1,6 @@
 {
   "name": "foldable-device-configurator",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "A simple web component which you can add to emulate various type of foldables devices. It will set the appropriate media queries according to the device and the setup.",
   "main": "build/foldable-device-configurator.js",
   "module": "build/foldable-device-configurator.js",
