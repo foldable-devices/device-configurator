@@ -51,7 +51,7 @@ ESM compatible modules can be found using [pika.dev](pika.de). Material design w
 Then run
 
 ```bash
-$ npx snowpack --optimize
+$ npx snowpack build
 ```
 
 To test in the browser, run
@@ -66,7 +66,7 @@ To build, run
 $ npm run build
 ```
 
-The build is then ready to publish to npm.
+The build is then ready to publish to npm (inside the dist/ directory)
 
 This demo is being developed by :
 

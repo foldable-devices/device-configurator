@@ -1,30 +1,13 @@
 {
   "name": "foldable-device-configurator",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A simple web component which you can add to emulate various type of foldables devices. It will set the appropriate media queries according to the device and the setup.",
-  "main": "build/foldable-device-configurator.js",
-  "module": "build/foldable-device-configurator.js",
-  "snowpack": {
-    "webDependencies": [
-      "lit-element",
-      "lit-html",
-      "lit-html/directives/class-map.js",
-      "@material/mwc-slider",
-      "@material/mwc-checkbox",
-      "@material/mwc-drawer",
-      "@material/mwc-icon-button",
-      "spanning-css-polyfill"
-    ],
-    "dedupe": [
-      "lit-element",
-      "lit-html",
-      "spanning-css-polyfill"
-    ]
-  },
+  "main": "dist/foldable-device-configurator.js",
+  "module": "dist/foldable-device-configurator.js",
   "scripts": {
     "start": "es-dev-server --node-resolve --watch --babel --open demo/index.html --port 8081",
-    "build": "rimraf build && rollup -c rollup.config.js && rimraf web_modules && snowpack --optimize",
-    "regen-package-lock": "rimraf node_modules && rimraf package-lock.json; npm install"
+    "build": "rimraf build && snowpack build && rimraf dist && rollup -c rollup.config.js",
+    "regen-package-lock": "rimraf package-lock.json && rimraf node_modules && npm install"
   },
   "files": [
     "!/demo/",
@@ -45,10 +28,12 @@
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-replace": "^2.3.3",
     "@rollup/plugin-babel": "^5.1.0",
+    "rollup-plugin-terser": "^6.1.0",
     "es-dev-server": "^1.56.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.21.0",
-    "snowpack": "^2.6.4"
+    "snowpack": "^2.6.4",
+    "@snowpack/plugin-babel": "^1.4.0"
   },
   "keywords": [],
   "type": "module",

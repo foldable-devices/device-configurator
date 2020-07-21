@@ -1,6 +1,6 @@
-import { LitElement, html, css } from '../web_modules/lit-element.js';
-import '../web_modules/@material/mwc-slider.js';
-import { FoldablesFeature } from "../web_modules/spanning-css-polyfill.js";
+import { LitElement, html, css } from '../build/web_modules/lit-element.js';
+import '../build/web_modules/@material/mwc-slider.js';
+import { FoldablesFeature } from "../build/web_modules/spanning-css-polyfill.js";
 
 export const DeviceType = {
   Foldable: 'foldable',
