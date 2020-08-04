@@ -714,6 +714,10 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._deviceType = DeviceType.Dual;
         this.foldWidth = 28;
         this._currentDevice = 'duo';
+        // If the preview was already a duo (e.g. when not spanning or the default)
+        // We need to make sure to force the reload otherwise the frame won't change
+        // and thus won't redraw.
+        this._frame.contentWindow.location.reload(true);
         break;
       case 'asus':
         this._resizeHandler = this._debounce(this._onResize, 200);
