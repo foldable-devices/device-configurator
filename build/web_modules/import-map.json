@@ -1,12 +1,7 @@
 {
   "imports": {
-    "@material/mwc-checkbox": "./@material/mwc-checkbox.js",
-    "@material/mwc-drawer": "./@material/mwc-drawer.js",
-    "@material/mwc-icon-button": "./@material/mwc-icon-button.js",
     "@material/mwc-slider": "./@material/mwc-slider.js",
     "lit-element": "./lit-element.js",
-    "lit-html": "./lit-html.js",
-    "lit-html/directives/class-map.js": "./lit-html/directives/class-map.js",
     "spanning-css-polyfill": "./spanning-css-polyfill.js"
   }
 }

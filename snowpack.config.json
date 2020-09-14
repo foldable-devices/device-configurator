@@ -1,21 +1,19 @@
 {
-  "install": [
-    "lit-element",
-    "lit-html",
-    "lit-html/directives/class-map.js",
-    "@material/mwc-slider",
-    "@material/mwc-checkbox",
-    "@material/mwc-drawer",
-    "@material/mwc-icon-button",
-    "spanning-css-polyfill"
-  ],
+  "mount": {
+    "demo": "/",
+    "src": "/dist"
+  },
   "rollup.dedupe": [
     "lit-element",
     "lit-html",
     "spanning-css-polyfill"
   ],
-  "plugins": ["@snowpack/plugin-babel"],
-  "scripts": {
-    "build:js": "@snowpack/plugin-babel"
-  }
+  "plugins": [
+    [
+      "@snowpack/plugin-babel",
+      {
+        "input": [".js", ".mjs", ".jsx", ".ts", ".tsx"]
+      }
+    ]
+  ]
 }

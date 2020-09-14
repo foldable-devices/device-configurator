@@ -32,7 +32,7 @@ Both are proposals from Microsoft. At this time the configurator will only set t
 
 ## Demo
 
-- Go [here](https://foldable-devices.github.io/device-configurator/demo/)
+- Go [here](https://foldable-devices.github.io/device-configurator/build/)
 
 - You can also try a more advanced demo [here](https://foldable-devices.github.io/demos/photo-gallery/)
 
@@ -51,7 +51,7 @@ ESM compatible modules can be found using [pika.dev](pika.de). Material design w
 Then run
 
 ```bash
-$ npx snowpack build
+$ npm run build
 ```
 
 To test in the browser, run
