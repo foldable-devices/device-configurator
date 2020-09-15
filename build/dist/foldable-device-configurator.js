@@ -517,18 +517,6 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._seam_container.style.display = 'none';
         break;
 
-      case 'hsb':
-        this._orientation_select.disabled = false;
-        this._seam_container.style.display = 'flex';
-        this._seam_slider.disabled = false;
-        this._deviceType = DeviceType.Foldable;
-
-        this._seam_slider.layout();
-
-        this.foldWidth = 114;
-        this._currentDevice = 'hsb';
-        break;
-
       case 'fold':
         this._orientation_select.disabled = false;
         this._seam_container.style.display = 'flex';
@@ -618,14 +606,6 @@ export class FoldableDeviceConfigurator extends LitElement {
         this.shadowRoot.host.style.setProperty('--device-screen1-height', '1396px');
         this.shadowRoot.host.style.setProperty('--device-screen2-height', '1396px');
         this.shadowRoot.host.style.setProperty('--device-fold-width', '30px');
-        break;
-
-      case 'hsb':
-        this.shadowRoot.host.style.setProperty('--device-screen1-width', '1280px');
-        this.shadowRoot.host.style.setProperty('--device-screen2-width', '1280px');
-        this.shadowRoot.host.style.setProperty('--device-screen1-height', '1920px');
-        this.shadowRoot.host.style.setProperty('--device-screen2-height', '1920px');
-        this.shadowRoot.host.style.setProperty('--device-fold-width', '114px');
         break;
 
       default:
@@ -778,7 +758,6 @@ export class FoldableDeviceConfigurator extends LitElement {
             <option value="duo">Surface Duo</option>
             <option value="asus">Asus Zenbook Pro Duo</option>
             <option value="fold">Samsung Galaxy Fold</option>
-            <option value="hsb">HSB</option>
           </optgroup>
         </select>
         <label for="orientation-select" class="category">Orientation</label>
