@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "@material/mwc-slider": "./@material/mwc-slider.js",
-    "lit-element": "./lit-element.js",
-    "spanning-css-polyfill": "./spanning-css-polyfill.js"
-  }
-}

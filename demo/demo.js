@@ -1,4 +1,4 @@
-import { LitElement, html, css as litCSS, customElement } from 'lit-element';
+import { LitElement, html, css as litCSS } from 'lit';
 import { FoldablesFeature, adjustCSS, observe } from "spanning-css-polyfill";
 
 const css = (strings, ...values) => {

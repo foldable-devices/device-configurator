@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html, css } from 'lit';
 import '@material/mwc-slider';
 import { FoldablesFeature } from "spanning-css-polyfill";
 
