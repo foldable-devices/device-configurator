@@ -1,7 +1,7 @@
 # Foldable Device Configurator
 
 Foldable Device Configurator is a little Web Component which you can drop in your application to test
-the CSS Spanning Polyfill located [here](https://github.com/foldable-devices/spanning-css-polyfill)
+the CSS Viewport Segments Polyfill located [here](https://github.com/foldable-devices/viewportsegments-css-polyfill)
 
 ## How to use  the foldable configurator in your project?
 
@@ -23,10 +23,10 @@ When imported, in your HTML file just add the following lines:
 ## Adapting your web application to foldable/dual screen devices
 
 This web component will let you emulate various foldable configurations and will set the foldable polyfills accordingly. Currently there are two polyfills you can use to design or adapt web contents for foldable devices :
-- A JavaScript API called Window Segments located [here](https://github.com/foldable-devices/windowsegments-polyfill)
-- CSS Properties called Spanning located [here](https://github.com/foldable-devices/spanning-css-polyfill)
+- A JavaScript API called Viewport Segments located [here](https://github.com/foldable-devices/windowsegments-polyfill)
+- CSS Properties called Viewport Segments located [here](https://github.com/foldable-devices/viewportsegments-css-polyfill)
 
-Both are proposals from Microsoft. At this time the configurator will only set the spanning media-queries.
+Both are proposals from Microsoft. At this time the configurator will only set the viewportsegments media-queries.
 
 :warning: The two aforementioned APIs are early work in progress and are subject to change anytime.
 

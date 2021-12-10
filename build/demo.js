@@ -1,7 +1,7 @@
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 import { LitElement, html, css as litCSS } from './_snowpack/pkg/lit.js';
-import { FoldablesFeature, adjustCSS, observe } from "./_snowpack/pkg/spanning-css-polyfill.js";
+import { FoldablesFeature, adjustCSS, observe } from "./_snowpack/pkg/viewportsegments-css-polyfill.js";
 
 const css = (strings, ...values) => {
   const string = adjustCSS(strings[0], "main-application");
@@ -90,43 +90,44 @@ _defineProperty(MainApplication, "styles", css`
       height: 0;
       width: 0;
     }
-    @media (screen-spanning: single-fold-vertical) {
+
+    @media (horizontal-viewport-segments: 2) {
       .main-container {
-        width: env(fold-left);
+        width: env(viewport-segment-right 0 0);
         height: 100vh;
       }
       .fold {
-        height: env(fold-height);
-        width: env(fold-width);
+        height: env(viewport-segment-height 0 0);
+        width: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0));
       }
       .content {
         flex-direction: row;
       }
       .second-container {
         height: 100vh;
-        width: calc(100vw - env(fold-left) - env(fold-width));
+        width: env(viewport-segment-width 1 0);
       }
     }
 
-    @media (screen-spanning: single-fold-horizontal) {
+    @media (vertical-viewport-segments: 2) {
       .main-container {
         width: 100vw;
-        height: var(--zenbook-span1-height, calc(100vh - env(fold-top) - env(fold-height)));
+        height: var(--zenbook-span1-height, env(viewport-segment-top 0 1));
       }
       .fold {
-        height: env(fold-height);
-        width: env(fold-width);
+        height: calc(env(viewport-segment-top 0 1) - env(viewport-segment-bottom 0 0));
+        width: env(viewport-segment-width 0 0);
       }
       .content {
         flex-direction: column-reverse;
       }
       .second-container {
-        height: var(--zenbook-span2-height, env(fold-top));
+        height: var(--zenbook-span2-height, env(viewport-segment-height 0 0));
         width: 100vw;
       }
     }
 
-    @media (screen-spanning: none) {
+    @media (horizontal-viewport-segments: 1) and (vertical-viewport-segments: 1) {
       .main-container {
         width: 100vw;
         height: 100vh;

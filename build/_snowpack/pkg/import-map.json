@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@material/mwc-slider": "./@material/mwc-slider.js",
+    "lit": "./lit.js",
+    "viewportsegments-css-polyfill": "./viewportsegments-css-polyfill.js"
+  }
+}

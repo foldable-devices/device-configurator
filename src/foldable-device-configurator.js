@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import '@material/mwc-slider';
-import { FoldablesFeature } from "spanning-css-polyfill";
+import { FoldablesFeature } from "viewportsegments-css-polyfill";
 
 export const DeviceType = {
   Foldable: 'foldable',
@@ -232,7 +232,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
 
     mwc-slider {
-      --mdc-theme-secondary: black;
+      --mdc-theme-primary: black;
       width: 80%;
       margin-left: 12px;
     }
@@ -362,7 +362,10 @@ export class FoldableDeviceConfigurator extends LitElement {
   `;
 
   static get properties() {
-    return { spanning: { type: String} };
+    return {
+      verticalViewportSegments: { type: Number},
+      horizontalViewportSegments: { type: Number},
+    };
   }
 
   _mini_configurator_header;
@@ -382,7 +385,8 @@ export class FoldableDeviceConfigurator extends LitElement {
   _currentDevice;
   _isFullscreen = false;
 
-  _spanning;
+  _verticalViewportSegments = 1;
+  _horizontalViewportSegments = 1;
   _fold_width;
   _browser_shell_size;
 
@@ -403,7 +407,8 @@ export class FoldableDeviceConfigurator extends LitElement {
 
   constructor() {
     super();
-    this._spanning = 'none'
+    this._verticalViewportSegments = 1;
+    this._horizontalViewportSegments = 1;
   }
 
   firstUpdated() {
@@ -413,11 +418,10 @@ export class FoldableDeviceConfigurator extends LitElement {
     }
 
     const hasBrowserSupport =
-      window.matchMedia('(screen-spanning: single-fold-horizontal)').matches ||
-      window.matchMedia('(screen-spanning: single-fold-vertical)').matches ||
-      window.matchMedia('(screen-spanning: none)').matches || false;
+      window.matchMedia('(vertical-viewport-segments)').matches ||
+      window.matchMedia('(horizontal-viewport-segments)').matches || false;
     if (hasBrowserSupport) {
-      console.info(`CSS Spanning Media Queries are supported, the configurator will hide itself.`);
+      console.info(`CSS Viewport Segments Media Queries are supported, the configurator will hide itself.`);
       this.shadowRoot.host.style.display = 'none';
       return;
     }
@@ -447,7 +451,8 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._seam_slider.disabled = true;
 
     this._browser_shell_size = 0;
-    this._spanning = 'none';
+    this._verticalViewportSegments = 1;
+    this._horizontalViewportSegments = 1;
     this.foldWidth = 0;
 
     this._preview = this.shadowRoot.querySelector('#preview');
@@ -456,7 +461,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._frame = this.shadowRoot.querySelector('#frame');
     this._device_hinge = this.shadowRoot.querySelector('#device-hinge');
     this._updateFoldablesFeature();
-    this._currentOrientation = 'none';
+    this._currentOrientation = 'portrait';
     this._deviceType = DeviceType.Dual;
     document.addEventListener('keyup', this._handleKeyUp, false);
     console.log('Device Pixel Ratio : ' + window.devicePixelRatio);
@@ -552,30 +557,31 @@ export class FoldableDeviceConfigurator extends LitElement {
   _handleAsusSpanning() {
     console.log(window.innerHeight)
     if (window.innerHeight > 752) {
-      this.spanning = 'single-fold-horizontal';
+      this.horizontalViewportSegments = 1;
+      this.verticalViewportSegments = 2;
       this.foldWidth = 30;
       this._updateFoldablesFeature();
       setTimeout( () => {
-        for (const sheet of document.styleSheets) {
-          if (sheet.ownerNode.className === '__foldables_sheet__') {
-            this._addZenbookVariables(sheet);
-            break;
-          }
-        }
-        for (const sheet of this._frame.contentDocument.styleSheets) {
-          if (sheet.ownerNode.className === '__foldables_sheet__') {
-            this._addZenbookVariables(sheet);
-            break;
-          }
-        }
-      }, 200)
+        this._addZenbookVariables(document.styleSheets[0]);
+        this._addZenbookVariables(this._frame.contentDocument.styleSheets[0]);
+      }, 300)
     } else {
-      this.spanning = 'none';
+      this.horizontalViewportSegments = 1;
+      this.verticalViewportSegments = 1;
       this.foldWidth = 0;
       this._updateFoldablesFeature();
     }
 
-    this._currentOrientation = this.spanning;
+    this._currentOrientation = this._orientationFromSegments();
+  }
+
+  _orientationFromSegments() {
+     if (this.horizontalViewportSegments === 2 && this.verticalViewportSegments === 1)
+      return "portrait";
+     else if (this.horizontalViewportSegments === 1 && this.verticalViewportSegments === 2)
+      return "landscape";
+     else
+      return "portrait";
   }
 
   _addZenbookVariables(sheet) {
@@ -598,7 +604,13 @@ export class FoldableDeviceConfigurator extends LitElement {
 
   _orientationChanged(event) {
     const selectedIndex = this._orientation_select.selectedIndex;
-    this.spanning = this._orientation_select[selectedIndex].value;
+    if (this._orientation_select[selectedIndex].value === 'portrait') {
+      this.horizontalViewportSegments = 2;
+      this.verticalViewportSegments = 1;
+    } else {
+      this.horizontalViewportSegments = 1;
+      this.verticalViewportSegments = 2;
+    }
     this._updatePreviewRotation();
     this._updateFoldablesFeature();
     this._calculateAndApplyScaleFactor();
@@ -634,25 +646,22 @@ export class FoldableDeviceConfigurator extends LitElement {
 
   _updatePreviewRotation() {
     // We're animating only if we're rotating the device.
-    if (this.spanning != this._currentOrientation) {
+    if (this._orientationFromSegments() != this._currentOrientation) {
       this._preview.style.transition = 'transform 0.7s ease-in-out';
       // Only animate the rotation.
       this._preview.addEventListener('transitionend', this._rotationFinished);
     }
-    this._currentOrientation = this.spanning;
-    switch(this.spanning) {
-      case 'none':
-        if (this._currentDevice  === 'asus')
+    this._currentOrientation = this._orientationFromSegments();
+    if (this.horizontalViewportSegments === 1 && this.verticalViewportSegments === 1) {
+      if (this._currentDevice  === 'asus') {
           this._applyHorizontalRotation();
-        else
+      } else {
           this._applyVerticalRotation();
-        break;
-      case 'single-fold-vertical':
-        this._applyVerticalRotation();
-        break;
-      case 'single-fold-horizontal':
-        this._applyHorizontalRotation();
-        break;
+      }
+    } else if (this.horizontalViewportSegments === 2) {
+      this._applyVerticalRotation();
+    } else {
+      this._applyHorizontalRotation();
     }
   }
 
@@ -660,26 +669,34 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._preview.style.transition = '';
   }
 
-  get spanning() {
-    return this._spanning;
+  get horizontalViewportSegments() {
+    return this._horizontalViewportSegments;
   }
 
-  set spanning(value) {
-    let oldSpanning = this._spanning;
-    switch(value) {
-      case 'none':
-      case 'single-fold-vertical':
-        this._orientation_select.selectedIndex = 0;
-        break;
-      case 'single-fold-horizontal':
-        this._orientation_select.selectedIndex = 1;
-        break;
-      default:
-        value = 'none';
-        this._orientation_select.selectedIndex = 0;
+  set horizontalViewportSegments(value) {
+    let oldhorizontalViewportSegments = this._horizontalViewportSegments;
+    if (value === 2) {
+      this._orientation_select.selectedIndex = 0;
+    } else {
+      this._orientation_select.selectedIndex = 1;
     }
-    this._spanning = value;
-    this.requestUpdate('spanning', oldSpanning);
+    this._horizontalViewportSegments = value;
+    this.requestUpdate('horizontalViewportSegments', oldhorizontalViewportSegments);
+  }
+
+  get verticalViewportSegments() {
+    return this._verticalViewportSegments;
+  }
+
+  set verticalViewportSegments(value) {
+    let oldverticalViewportSegments = this._verticalViewportSegments;
+    if (value === 2) {
+      this._orientation_select.selectedIndex = 1;
+    } else {
+      this._orientation_select.selectedIndex = 0;
+    }
+    this._verticalViewportSegments = value;
+    this.requestUpdate('verticalViewportSegments', oldverticalViewportSegments);
   }
 
   _deviceTypeChanged(event) {
@@ -687,8 +704,11 @@ export class FoldableDeviceConfigurator extends LitElement {
     const deviceType = this._device_type_select[selectedIndex].value;
     window.removeEventListener('resize', this._resizeHandler);
     this._resizeHandler = null;
-    if (this.spanning === 'none')
-      this._currentOrientation = this.spanning = 'single-fold-vertical';
+    if (this.verticalViewportSegments === 1 && this.horizontalViewportSegments === 1) {
+      this.verticalViewportSegments = 1;
+      this.horizontalViewportSegments = 2;
+      this._currentOrientation = "portrait";
+    }
     switch(deviceType) {
       case 'custom':
         this._seam_container.style.display = 'flex';
@@ -739,7 +759,9 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._orientation_select.disabled = true;
         this._seam_slider.disabled = true;
         this._seam_container.style.display = 'none';
-        this._currentOrientation = this.spanning = 'none';
+        this.verticalViewportSegments = 1;
+        this.horizontalViewportSegments = 1;
+        this._currentOrientation = "portrait";
         this._currentDevice = 'duo';
         this.foldWidth = 0;
         this._deviceType = DeviceType.Dual;
@@ -761,7 +783,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     let computedDeviceHeight = parseInt(deviceStyle.height, 10);
     let scaleFactor = 1;
     // The device is rotated, let's reverse.
-    if (this._currentOrientation == 'single-fold-horizontal') {
+    if (this._currentOrientation === 'landscape') {
       computedDeviceWidth = parseInt(deviceStyle.height, 10);
       computedDeviceHeight = parseInt(deviceStyle.width, 10);
     }
@@ -818,9 +840,10 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   _updateFoldablesFeature() {
-    const spanningFeat = new FoldablesFeature;
-    spanningFeat.foldSize = this.foldWidth;
-    spanningFeat.screenSpanning = this.spanning;
+    const viewportFeat = new FoldablesFeature;
+    viewportFeat.foldSize = this.foldWidth;
+    viewportFeat.horizontalViewportSegments = this.horizontalViewportSegments;
+    viewportFeat.verticalViewportSegments = this.verticalViewportSegments;
     this._seam_slider.value = this.foldWidth;
   }
 
@@ -898,7 +921,7 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   _toggleSpanning() {
-    if (this.spanning != 'none')
+    if (this.verticalViewportSegments != 1 || this.horizontalViewportSegments != 1)
       this._device_type_select.selectedIndex = 0;
     else
       this._device_type_select.selectedIndex = 2;
@@ -906,12 +929,16 @@ export class FoldableDeviceConfigurator extends LitElement {
   }
 
   _changeOrientation() {
-    if (this.spanning === 'none')
+    if (this.verticalViewportSegments === 1 && this.horizontalViewportSegments === 1) {
       return;
-    if (this.spanning === 'single-fold-vertical')
-      this.spanning = 'single-fold-horizontal';
-    else
-      this.spanning = 'single-fold-vertical';
+    }
+    if (this.verticalViewportSegments === 2) {
+      this.verticalViewportSegments = 1;
+      this.horizontalViewportSegments = 2;
+    } else {
+      this.verticalViewportSegments = 2;
+      this.horizontalViewportSegments = 1;
+    }
     this._updatePreviewRotation();
     this._updateFoldablesFeature();
     this._calculateAndApplyScaleFactor();
@@ -922,7 +949,7 @@ export class FoldableDeviceConfigurator extends LitElement {
     <div id="mini-configurator">
       <div class="header-background header" id="mini-configurator-header">Foldable Configurator</div>
       <div class="icon-row">
-        <splitview-icon @click="${this._toggleSpanning}" class="${this.spanning != 'none'? 'toggle' : ''}"></splitview-icon>
+        <splitview-icon @click="${this._toggleSpanning}" class="${this.verticalViewportSegments === 1 && this.horizontalViewportSegments === 1 ? '' : 'toggle'}"></splitview-icon>
         <rotate-icon @click="${this._changeOrientation}"></rotate-icon>
         <fullscreen-icon @click="${this._showConfigurator}"></fullscreen-icon>
         <close-icon @click="${this._closeConfigurator}"></close-icon>
@@ -951,8 +978,8 @@ export class FoldableDeviceConfigurator extends LitElement {
         </select>
         <label for="orientation-select" class="category">Orientation</label>
         <select id="orientation-select" disabled>
-          <option value="single-fold-vertical">Vertical</option>
-          <option value="single-fold-horizontal">Horizontal</option>
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
         </select>
         <div id="preview-text">Below is an emulated version on the device when spanning :</div>
         <div id="preview-container">

@@ -6,7 +6,7 @@
   "rollup.dedupe": [
     "lit-element",
     "lit-html",
-    "spanning-css-polyfill"
+    "viewportsegments-css-polyfill"
   ],
   "plugins": [
     [
