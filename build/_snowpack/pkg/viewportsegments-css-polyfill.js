@@ -62,13 +62,13 @@ var t = function () {
       width: r,
       height: i
     }, n += e[o].height, n += this.foldSize;
-    if (this.horizontalViewportSegments > 1) for (var a = window.innerWidth / this.horizontalViewportSegments - this.foldSize * (this.horizontalViewportSegments - 1) / this.horizontalViewportSegments, s = window.innerHeight, l = 0, c = 0; c < this.horizontalViewportSegments; ++c) e[c] = {
+    if (this.horizontalViewportSegments > 1) for (var s = window.innerWidth / this.horizontalViewportSegments - this.foldSize * (this.horizontalViewportSegments - 1) / this.horizontalViewportSegments, a = window.innerHeight, l = 0, c = 0; c < this.horizontalViewportSegments; ++c) e[c] = {
       top: 0,
       left: l,
-      right: l + a,
-      bottom: s,
-      width: a,
-      height: s
+      right: l + s,
+      bottom: a,
+      width: s,
+      height: a
     }, l += e[c].width, l += this.foldSize;
     window.visualViewport.segments = e;
   }, i.randomizeSegmentsConfiguration = function (e) {
@@ -121,8 +121,8 @@ var t = function () {
 
 window[n] = new i(), void 0 === window.visualViewport.segments && window[n].updateSegments();
 var o = /\((.*?)\)/gi,
-    a = /@media[^\(]+/gi,
-    s = /(horizontal-viewport-segments:)\s?(\d)/gi,
+    s = /@media[^\(]+/gi,
+    a = /(horizontal-viewport-segments:)\s?(\d)/gi,
     l = /(vertical-viewport-segments:)\s?(\d)/gi;
 
 function c(e, t) {
@@ -154,11 +154,11 @@ function u(e) {
         r = e[2],
         i = e[3],
         c = e[4],
-        u = r.match(a) || [],
+        u = r.match(s) || [],
         m = r.match(o) || [],
         d = h(r, l);
     void 0 === d && (d = 1);
-    var v = h(r, s);
+    var v = h(r, a);
     void 0 === v && (v = 1), m = m.filter(function (e) {
       return !e.includes("-viewport-segments");
     }).join(" and "), void 0 === n[d] && (n[d] = new Array()), n[d][v] = "" + t + u + m + "{" + i + c + "}";
@@ -179,20 +179,25 @@ if (!m) {
   }))).then(function (e) {
     var t = new DocumentFragment();
     e.forEach(function (e, n) {
-      for (var r = c(e, ""), i = u(e), o = f[n].href || "inline", a = 0, s = Object.entries(i); a < s.length; a++) {
-        var l = s[a],
-            h = l[0],
-            m = l[1];
-        null == g[h] && (g[h] = []);
+      for (var r, i = c(e, ""), o = u(e), s = f[n].href || "inline", a = 0, l = Object.entries(o); a < l.length; a++) {
+        var h = l[a],
+            m = h[0],
+            d = h[1];
+        null == g[m] && (g[m] = []);
 
-        for (var d = 0, v = Object.entries(m); d < v.length; d++) {
-          var w = v[d];
-          g[h][w[0]] = "/* origin: " + o + " */" + w[1];
+        for (var v = 0, w = Object.entries(d); v < w.length; v++) {
+          var p = w[v];
+          g[m][p[0]] = "/* origin: " + s + " */" + p[1];
         }
       }
 
-      var p = document.createElement("style");
-      p.setAttribute("data-css-origin", o), p.textContent = r, t.appendChild(p);
+      if ("inline" == s || (r = e, new RegExp("(\\s*)(@media.*?\\b-viewport-segments\\b[^{]+)\\{([\\s\\S]+?\\})(\\s*)\\}", "gi").test(r))) {
+        var S = document.createElement("style");
+        S.setAttribute("data-css-origin", s), S.textContent = i, t.appendChild(S);
+      } else {
+        var y = document.createElement("link");
+        y.type = "text/css", y.rel = "stylesheet", y.href = s, t.appendChild(y);
+      }
     }), f.forEach(function (e) {
       return null != e.parentElement && e.parentElement.removeChild(e);
     }), document.head.appendChild(t), p();
@@ -207,8 +212,8 @@ function w(e, t) {
       r = u(e);
   t && (g[t] = [[]]);
 
-  for (var i = t ? g[t] : g, o = t ? "" : "/* origin: inline */", a = 0, s = Object.entries(r); a < s.length; a++) {
-    var l = s[a],
+  for (var i = t ? g[t] : g, o = t ? "" : "/* origin: inline */", s = 0, a = Object.entries(r); s < a.length; s++) {
+    var l = a[s],
         h = l[0],
         d = l[1];
     null == i[h] && (i[h] = []);
@@ -234,14 +239,14 @@ function S(t) {
       i = null;
   (n = t ? g[t.nodeName.toLowerCase()] : g)[r.verticalViewportSegments] && (i = n[r.verticalViewportSegments][r.horizontalViewportSegments]);
   var o,
-      a = n[0][0] ? n[0][0] : null;
+      s = n[0][0] ? n[0][0] : null;
 
   if (i) {
-    var s = window.visualViewport.segments,
+    var a = window.visualViewport.segments,
         l = !1;
-    s.length > 1 && (l = !(s[0].height < window.innerHeight));
+    a.length > 1 && (l = !(a[0].height < window.innerHeight));
 
-    for (var c = 0, h = Object.entries(s); c < h.length; c++) for (var u = h[c], m = u[0], d = 0, f = Object.entries(u[1]); d < f.length; d++) {
+    for (var c = 0, h = Object.entries(a); c < h.length; c++) for (var u = h[c], m = u[0], d = 0, f = Object.entries(u[1]); d < f.length; d++) {
       var w = f[d],
           p = w[0];
       o = w[1] + "px", i = i.replace(new RegExp("env\\(\\s*" + (l ? "viewport-segment-" + p + " " + m + " 0" : "viewport-segment-" + p + " 0 " + m) + "\\s*\\)", "gi"), o);
@@ -281,7 +286,7 @@ function S(t) {
 
     if (t) {
       var b = t.shadowRoot;
-      "adoptedStyleSheets" in b && b.adoptedStyleSheets.length > 0 ? b.adoptedStyleSheets[0].replace(a + i) : y(b, i);
+      "adoptedStyleSheets" in b && b.adoptedStyleSheets.length > 0 ? b.adoptedStyleSheets[0].replace(s + i) : y(b, i);
     } else y(document, i);
   }
 }
