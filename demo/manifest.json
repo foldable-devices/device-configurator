@@ -6,7 +6,7 @@
   "display": "standalone",
   "orientation": "any",
   "Scope": "/",
-  "start_url": "/",
+  "start_url": "index.html",
   "icons": [
     {
       "src": "images/manifest/icon-72x72.png",

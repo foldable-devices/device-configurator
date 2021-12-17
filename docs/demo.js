@@ -1,7 +1,5 @@
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-import { LitElement, html, css as litCSS } from './_snowpack/pkg/lit.js';
-import { FoldablesFeature, adjustCSS, observe } from "./_snowpack/pkg/viewportsegments-css-polyfill.js";
+import { LitElement, html, css as litCSS } from 'lit';
+import { FoldablesFeature, adjustCSS, observe } from "viewportsegments-css-polyfill";
 
 const css = (strings, ...values) => {
   const string = adjustCSS(strings[0], "main-application");
@@ -9,29 +7,8 @@ const css = (strings, ...values) => {
 };
 
 export class MainApplication extends LitElement {
-  connectedCallback() {
-    super.connectedCallback();
-    observe(this);
-  }
 
-  constructor() {
-    super();
-  }
-
-  render() {
-    return html`
-        <div class="content">
-          <div class="main-container"><div class="text">Main Content</div></div>
-          <div class="fold angled stripes"></div>
-          <div class="second-container"><div class="text">Detail panel</div></div>
-          </div>
-        </div>
-    `;
-  }
-
-}
-
-_defineProperty(MainApplication, "styles", css`
+  static styles = css`
     :host {
       width: 100vw;
       height: 100vh;
@@ -145,6 +122,27 @@ _defineProperty(MainApplication, "styles", css`
         display: none;
       }
     }
-  `);
+  `;
+
+  connectedCallback() {
+    super.connectedCallback();
+    observe(this);
+  }
+
+  constructor() {
+    super();
+  }
+
+  render() {
+    return html`
+        <div class="content">
+          <div class="main-container"><div class="text">Main Content</div></div>
+          <div class="fold angled stripes"></div>
+          <div class="second-container"><div class="text">Detail panel</div></div>
+          </div>
+        </div>
+    `;
+  }
+}
 
 customElements.define("main-application", MainApplication);
