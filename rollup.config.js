@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
-import {terser } from "rollup-plugin-terser";
+import css from 'rollup-plugin-css-only'
+import terser from "@rollup/plugin-terser";
 
 export default {
 	input: ['src/foldable-device-configurator.js'],
@@ -10,7 +11,10 @@ export default {
 		sourcemap: true
 	},
 	plugins: [
-    resolve(),
+    	resolve(),
+		css({
+			output: 'bundle.css' 
+		}),
 		babel({ babelHelpers: 'bundled' }),
 		terser()
   ]

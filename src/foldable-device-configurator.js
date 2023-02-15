@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
-import '@material/mwc-slider';
+import '@shoelace-style/shoelace/dist/themes/light.css';
+import '@shoelace-style/shoelace/dist/components/range/range.js';
 import { FoldablesFeature } from "viewportsegments-css-polyfill";
 
 export const DeviceType = {
@@ -109,6 +110,9 @@ export class FoldableDeviceConfigurator extends LitElement {
       --device-bezel-horizontal: 8px;
       --device-fold-width: 28px;
       --scale-factor: 0.44;
+      /* This is the customize the thumb of the sl range */
+      --sl-color-primary-500: grey;
+      --sl-color-primary-600: black;
     }
 
     @media (min-width: 320px) and (max-width: 1024px) {
@@ -231,8 +235,8 @@ export class FoldableDeviceConfigurator extends LitElement {
       margin: 12px 12px 0px 12px;
     }
 
-    mwc-slider {
-      --mdc-theme-primary: black;
+    #seam {
+      --track-color-active: black;
       width: 80%;
       margin-left: 12px;
     }
@@ -439,7 +443,6 @@ export class FoldableDeviceConfigurator extends LitElement {
     this._mini_configurator_header.onpointerdown = this._startDragMiniConfigurator.bind(this);
     this._device_type_select.onchange = this._deviceTypeChanged.bind(this);
     this._orientation_select.onchange = this._orientationChanged.bind(this);
-    this._seam_slider.oninput = this._seamValueUpdated.bind(this);
 
     const style = window.getComputedStyle(this.shadowRoot.host);
     const configuratorWith = parseFloat(style.width);
@@ -588,9 +591,9 @@ export class FoldableDeviceConfigurator extends LitElement {
     sheet.insertRule('body {--zenbook-span1-height: 440px; --zenbook-span2-height: 720px;}', sheet.cssRules.length);
   }
 
-  _seamValueUpdated = async (event) => {
-    this.foldWidth = event.target.value;
-    this.shadowRoot.host.style.setProperty('--device-fold-width', event.target.value + 'px');
+  _seamValueUpdated = async () => {
+    this.foldWidth = this._seam_slider.value;
+    this.shadowRoot.host.style.setProperty('--device-fold-width', this.foldWidth + 'px');
     this._updateFoldablesFeature();
   }
 
@@ -714,7 +717,6 @@ export class FoldableDeviceConfigurator extends LitElement {
         this._seam_container.style.display = 'flex';
         this._orientation_select.disabled = false;
         this._seam_slider.disabled = false;
-        this._seam_slider.layout();
         this.foldWidth = 24;
         this._deviceType = DeviceType.Dual;
         this._currentDevice = 'custom';
@@ -997,8 +999,8 @@ export class FoldableDeviceConfigurator extends LitElement {
           </div>
         </div>
         <div id="seam-container">
-          <label for="seam" class="category">Seam width</label>
-          <mwc-slider markers pin step="5" value="30" min="0" max="200" id="seam" disabled></mwc-slider>
+          <sl-range @sl-change="${() => this._seamValueUpdated()}" label="Seam width" step="5" value="30" min="0" max="200" id="seam" disabled>
+          </sl-range>
         </div>
         <div class="legend"> If you close the configurator use CTRL + i to show it again </div>
       </div>
