@@ -32,13 +32,13 @@ Both are proposals from Microsoft. At this time the configurator will only set t
 
 ## Demo
 
-- Go [here](https://foldable-devices.github.io/device-configurator/build/)
+- Go [here](https://foldable-devices.github.io/device-configurator/)
 
 - You can also try a more advanced demo [here](https://foldable-devices.github.io/demos/photo-gallery/)
 
 ## Working on the foldable configurator component
 
-This project makes use of ECMAScript Modules (ESM) and runs them directly in the browser using [Snowpack](snowpack.dev). If you install new dependencies using `npm` like `npm install --save @material/mwc-button`, then please run `npx snowpack` afterwards to generate the new modules in `web_modules` folder. Also, the `web_modules` folder should be committed. Make sure to update the package.json file accordingly.
+This project makes use of ECMAScript Modules (ESM) and runs them directly in the browser using [Vite](https://vitejs.dev/). If you install new dependencies using `npm` like `npm install --save my-dependency`, then please run `npm run build` afterwards to generate the new modules in `docs` folder. Also, the `docs` folder should be committed. Make sure to update the package.json file accordingly.
 
 To install app dependencies and but any further steps, run
 
@@ -46,9 +46,7 @@ To install app dependencies and but any further steps, run
 $ npm install
 ```
 
-ESM compatible modules can be found using [pika.dev](pika.de). Material design web components can be found by searching for `@material/mwc-`. You can try out the demo page here: [Material Web Components demo](https://mwc-demos.glitch.me/)
-
-Then run
+Shoelace web components can be found [here](https://shoelace.style/)
 
 ```bash
 $ npm run build
